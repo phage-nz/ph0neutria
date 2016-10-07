@@ -190,15 +190,15 @@ def getWildFile(url):
             tmpName = randomString(32)
             tmpFilePath = os.path.join(OUTPUT_FOLDER, tmpName)
             open(tmpFilePath,"wb").write(response)
-            logging.info("Saved as temporary file: {0}".format(tmpFilePath))
+            logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
             # Do not trust wild MD5 sums.
             fileMd5 = md5Sum(tmpFilePath)
             filePath = os.path.join(OUTPUT_FOLDER, fileMd5)
-            logging.info("Saved as file: {0}. Checking Viper again.".format(filePath))
+            os.rename(tmpFilePath, filePath)
+            logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
 
             if not isInViper(fileHash=fileMd5):
-                os.rename(tmpFilePath, filePath)
                 tags = getTags(fileMd5, "wild-spider", source=url)
                 uploadToViper(filePath, fileMd5, tags)
 
