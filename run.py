@@ -195,6 +195,7 @@ def getWildFile(url, urlMD5):
             logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
             # Do not trust wild MD5 sums.
+<<<<<<< HEAD
             fileMD5 = md5SumFile(tmpFilePath)
             filePath = os.path.join(OUTPUT_FOLDER, fileMD5)
             os.rename(tmpFilePath, filePath)
@@ -204,6 +205,16 @@ def getWildFile(url, urlMD5):
                 fileName = url.split('/')[-1]
                 tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
                 uploadToViper(filePath, fileName, tags)
+=======
+            fileMd5 = md5Sum(tmpFilePath)
+            filePath = os.path.join(OUTPUT_FOLDER, fileMd5)
+            os.rename(tmpFilePath, filePath)
+            logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
+
+            if not isInViper(fileHash=fileMd5):
+                tags = getTags(fileMd5, "wild-spider", source=url)
+                uploadToViper(filePath, fileMd5, tags)
+>>>>>>> origin/master
 
             if DELETE_OUTPUT.lower() == "yes":
                 logging.info("Removing file: {0}".format(filePath))
