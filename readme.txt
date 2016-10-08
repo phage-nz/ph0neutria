@@ -28,7 +28,7 @@ apt-get update
 apt-get ugprade -y
 
 # Install prereq's:
-apt-get -f install git libssl-dev swig libfuzzy-dev libffi-dev python-pip -y
+apt-get -f install autoconf git libssl-dev swig libfuzzy-dev libffi-dev libjansson-dev libmagic-dev libtool python-pip -y
 pip install --upgrade pip
 pip install BeautifulSoup SQLAlchemy PrettyTable python-magic requests_toolbelt
 cd ~
@@ -40,6 +40,18 @@ sudo make install
 sudo pip install pydeep
 cd ..
 rm -rf ssdeep-2.13
+git clone https://github.com/plusvic/yara
+cd yara
+./bootstrap.sh
+autoreconf -vi --force
+./configure --enable-cuckoo --enable-magic
+make
+make install
+cd yara-python/
+python setup.py install
+cd ../..
+rm -rf yara
+pip install yara-python
 
 # Install Viper:
 cd /opt
