@@ -95,12 +95,13 @@ sudo -H -u spider python run.py
 
 Tags
 """"
-{1},{2},{3},{4}
+{1},{2},{3},{4},{5}
 
 1) File MD5.
-2) Source URL (see Known Issues).
-3) URL MD5 (for Wild files only).
-4) Source agent (Wild or MalShare).
+2) Source domain/host.
+3) Source URL (see Known Issues).
+4) URL MD5 (for Wild files only).
+5) Source agent (Wild or MalShare).
 
 
 Known Issues

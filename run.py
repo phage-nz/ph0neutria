@@ -2,6 +2,7 @@
 from itertools import islice
 from common.stringHelpers import *
 from ConfigParser import SafeConfigParser
+from urlparse import urlparse
 from UserString import MutableString
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import json
@@ -274,6 +275,8 @@ def getTags(fileHash, url, agent, urlHash=None):
     tags = MutableString()
 
     tags += fileHash
+    tags += ","
+    tags += urlparse(url).hostname
     tags += ","
     tags += url
     tags += ","
