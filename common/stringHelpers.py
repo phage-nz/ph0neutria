@@ -5,17 +5,10 @@ import random
 import requests
 import string 
 import urllib2
+import validators
 
-def convert2printable(s):
-    if not isinstance(s, basestring) or isPrintable(s):
-        return s
-    return "".join(convertChar(c) for c in s)
-
-def isPrintable(s):
-    for c in s:
-        if not c in PRINTABLE_CHARACTERS:
-            return False
-    return True
+def isValidUrl(url):
+    return validators.url(url)
 
 def soupParse(url):
 	request = urllib2.Request(url)

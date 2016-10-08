@@ -5,6 +5,7 @@ from ConfigParser import SafeConfigParser
 from urlparse import urlparse
 from UserString import MutableString
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+import coloredlogs
 import json
 import logging
 import multiprocessing
@@ -23,7 +24,7 @@ import time
 #|__|        \/       \/     \/     \/                           \/
 #
 #                   ph0neutria malware crawler
-#                             v0.2
+#                             v0.3
 #              https://github.com/t0x0-nz/ph0neutria
 
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -31,6 +32,7 @@ with open(os.path.join(pwd, 'res', 'banner.txt'), 'r') as banner:
         print banner.read()
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.INFO)
+coloredlogs.install()
 
 logging.info("Loading configuration...")
 parser = SafeConfigParser()
@@ -43,8 +45,9 @@ OUTPUT_FOLDER = os.path.join(pwd, OUTPUT_FOLDER_NAME)
 DELETE_OUTPUT = parser.get("Core", "deleteoutput")
 MALSHARE_API = parser.get("MalShare", "apiurl")
 MALSHARE_DIGEST = parser.get("MalShare", "dailyurl")
-API_KEY = parser.get("MalShare", "apikey")
+MS_API_KEY = parser.get("MalShare", "apikey")
 MALC0DE_URL = parser.get("Malc0de", "url")
+VXVAULT_URL = parser.get("VXVault", "url")
 VIPER_URL_ADD = parser.get("Viper", "addurl")
 VIPER_URL_FIND = parser.get("Viper", "findurl")
 
@@ -57,10 +60,13 @@ def main():
         webs = []
         malc0deWeb = multiprocessing.Process(target=startMalc0de)
         malshareWeb = multiprocessing.Process(target=startMalShare)
+        vxVaultWeb = multiprocessing.Process(target=startVXVault)
         webs.append(malc0deWeb)
         webs.append(malshareWeb)
+        webs.append(vxVaultWeb)
         malc0deWeb.start()
         malshareWeb.start()
+        vxVaultWeb.start()
 
         try:
             for web in webs:
@@ -74,7 +80,8 @@ def main():
     else:
         logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
         startMalc0de()
-        #startMalShare()
+        startMalShare()
+        startVXVault()
 
 def startMalc0de():
     for mUrl in getMalc0deList():
@@ -89,17 +96,29 @@ def startMalShare():
             logging.info("Downloading from MalShare: {0}".format(mHash))
             getMalShareFile(mHash)
 
+def startVXVault():
+    for vUrl in getVXList():
+        print vUrl
+        vUrlHash = md5SumString(vUrl)
+        if not isInViper(urlHash=vUrlHash):
+            logging.info("Downloading from the wild: {0}".format(vUrl))
+            getWildFile(vUrl, vUrlHash)
+
 def getMalShareList():
     try:
         userAgent = {'User-agent': USER_AGENT}
 
+        logging.info("Fetching latest MalShare list.")
+
         request = requests.get(MALSHARE_DIGEST, headers=userAgent)
 
         if request.status_code == 200:
+            malList = []
+
             for line in request.content.split('\n'):
-                logging.debug("Yield line: {0}".format(line))
-                yield line
-            logging.debug("No more lines.")
+                malList.append(line.strip())
+            return malList
+
         else:
             logging.error("Problem connecting to MalShare. Status code:{0}. Please try again later.".format(request.status_code))
             sys.exit(1)
@@ -114,6 +133,8 @@ def getMalShareList():
 
 def getMalc0deList():
     rawList = []
+
+    logging.info("Fetching latest Malc0de list.")
 
     xml = soupParse(MALC0DE_URL)
 
@@ -133,12 +154,41 @@ def getMalc0deList():
         return malList
 
     else:
-        logging.error("Empty Malc0de XML. Please try again later.")
+        logging.error("Empty Malc0de XML. Potential connection error. Please try again later.")
+        sys.exit(1)
+
+def getVXList():
+    try:
+        userAgent = {'User-agent': USER_AGENT}
+
+        logging.info("Fetching latest VX Vault list.")
+
+        request = requests.get(VXVAULT_URL, headers=userAgent)
+
+        if request.status_code == 200:
+            malList = []
+
+            for line in request.content.split('\n'):
+                url = line.strip()
+                if isValidUrl(url):
+                    malList.append(url)
+            return malList
+                
+        else:
+            logging.error("Problem connecting to VX Vault. Status code:{0}. Please try again later.".format(request.status_code))
+            sys.exit(1)
+
+    except Exception as e:
+        logging.error("Problem connecting to VX Vault. Please try again later.")
+        logging.exception(sys.exc_info())
+        logging.exception(type(e))
+        logging.exception(e.args)
+        logging.exception(e)
         sys.exit(1)
 
 def getMalShareFile(fileHash):
     try:
-        payload = {'action': 'getfile', 'api_key': API_KEY, 'hash' : fileHash }
+        payload = {'action': 'getfile', 'api_key': MS_API_KEY, 'hash' : fileHash }
         userAgent = {'User-agent': USER_AGENT}
 
         request = requests.get(MALSHARE_API, params=payload, headers=userAgent)
@@ -147,7 +197,7 @@ def getMalShareFile(fileHash):
             response = request.content
 
             if response == "Sample not found":
-                logging.error("Sample not found.")
+                logging.warning("Sample not found.")
                 return None
             if response == "ERROR! => Account not activated":
                 logging.error("Bad API key.")
@@ -156,14 +206,22 @@ def getMalShareFile(fileHash):
                 logging.error("Exceeded MalShare request quota.")
                 sys.exit(1)
 
-            filePath = os.path.join(OUTPUT_FOLDER, fileHash)
-            open(filePath,"wb").write(response)
-            logging.info("Saved as file: {0}".format(filePath))
+            tmpName = randomString(32)
+            tmpFilePath = os.path.join(OUTPUT_FOLDER, tmpName)
+            open(tmpFilePath,"wb").write(response)
+            logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
-            url = getMalShareSource(fileHash)
-            fileName = url.split('/')[-1]
-            tags = getTags(fileHash, url, "malshare-spider")
-            uploadToViper(filePath, fileName, tags)
+            # For whatever reason cannot even trust MalShare MD5 sums.
+            fileMD5 = md5SumFile(tmpFilePath)
+            filePath = os.path.join(OUTPUT_FOLDER, fileMD5)
+            os.rename(tmpFilePath, filePath)
+            logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
+
+            if not isInViper(fileHash=fileMD5):
+                url = getMalShareSource(fileHash)
+                fileName = url.split('/')[-1]
+                tags = getTags(fileMD5, url, "malshare-spider")
+                uploadToViper(filePath, fileName, tags)
 
             if DELETE_OUTPUT.lower() == "yes":
                 logging.info("Removing file: {0}".format(filePath))
@@ -211,10 +269,13 @@ def getWildFile(url, urlMD5):
                 os.remove(filePath)
  
         else:
-            logging.error("Problem connecting to {0}. Status code: {1}. Continuing.".format(url, request.status_code))
+            logging.warning("Problem connecting to {0}. Status code: {1}. Continuing.".format(url, request.status_code))
+
+    except requests.exceptions.ConnectionError as e:
+        logging.warning("Problem connecting to {0}. Error: {1}".format(url, e))
 
     except Exception as e:
-        logging.error("Problem connecting to {0}. Continuing.".format(url))
+        logging.warning("Problem connecting to {0}. Continuing.".format(url))
         logging.exception(sys.exc_info())
         logging.exception(type(e))
         logging.exception(e.args)
@@ -238,10 +299,10 @@ def uploadToViper(filePath, fileName, tags):
             logging.info("Submitted to Viper, message: {0}".format(responsejson["message"]))
 
         else:
-            logging.error("Problem submitting {0} to Viper. Status code: {1}. Continuing.".format(fileName, request.status_code))
+            logging.warning("Problem submitting {0} to Viper. Status code: {1}. Continuing.".format(fileName, response.status_code))
 
     except Exception as e:
-        logging.error("Problem submitting {0} to Viper. Continuing.".format(fileName))
+        logging.warning("Problem submitting {0} to Viper. Continuing.".format(fileName))
         logging.exception(sys.exc_info())
         logging.exception(type(e))
         logging.exception(e.args)
@@ -250,7 +311,7 @@ def uploadToViper(filePath, fileName, tags):
 
 def getMalShareSource(fileHash):
     try:
-        payload = {'action': 'details', 'api_key': API_KEY, 'hash' : fileHash }
+        payload = {'action': 'details', 'api_key': MS_API_KEY, 'hash' : fileHash }
         userAgent = {'User-agent': USER_AGENT}
 
         request = requests.get(MALSHARE_API, params=payload, headers=userAgent)
@@ -287,7 +348,7 @@ def getTags(fileHash, url, agent, urlHash=None):
 
     tags += agent
 
-    logging.info("tags={0}".format(tags))
+    logging.debug("tags={0}".format(tags))
 
     return str(tags)
 
@@ -307,10 +368,10 @@ def isInViper(fileHash=None,urlHash=None):
 
         if not response.status_code == 200:
             if response.status_code == 400:
-                logging.info("400 Invalid Search Term: ({0})".format(str(param)))
+                logging.warning("400 Invalid Search Term: ({0})".format(str(param)))
                 return False
             else:
-                logging.error("Unable to perform HTTP request to Viper (HTTP code={0})".format(response.status_code))
+                logging.warning("Unable to perform HTTP request to Viper (HTTP code={0})".format(response.status_code))
     except Exception as e:
         raise Exception("Unable to establish connection to Viper: {0}".format(e))
 

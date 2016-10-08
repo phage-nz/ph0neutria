@@ -6,12 +6,12 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.2
+                            v0.3
              https://github.com/t0x0-nz/ph0neutria
 
 About
 """""
-ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the Malc0de database). All fetched samples are stored in Viper for ease of access.
+ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the Malc0de and VX Vault databases). All fetched samples are stored in Viper for ease of access.
 
 This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, formerly known as "Malware Crawler"). However, ph0neutria aims to:
 - Limit the scope of crawling to only frequently updated and reliable sources.
@@ -30,7 +30,7 @@ apt-get ugprade -y
 # Install prereq's:
 apt-get -f install autoconf git libssl-dev swig libfuzzy-dev libffi-dev libjansson-dev libmagic-dev libtool python-pip -y
 pip install --upgrade pip
-pip install BeautifulSoup SQLAlchemy PrettyTable python-magic requests_toolbelt
+pip install BeautifulSoup coloredlogs SQLAlchemy PrettyTable python-magic requests_toolbelt validators
 cd ~
 wget http://heanet.dl.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz
 tar -xzvf ssdeep-2.13.tar.gz
@@ -98,10 +98,12 @@ Tags
 {1},{2},{3},{4},{5}
 
 1) File MD5.
-2) Source domain/host.
-3) Source URL (see Known Issues).
-4) URL MD5 (for Wild files only).
-5) Source agent (Wild or MalShare).
+2) Source domain (see Known Issues).
+2) Source URL (see Known Issues).
+3) URL MD5 (for Wild files only - used for validation).
+4) Source agent (Wild or MalShare).
+
+The original name of the file forms the identifying name within Viper.
 
 
 Known Issues
