@@ -1,9 +1,9 @@
 #!/usr/bin/python
 from itertools import islice
-from common.multiPartForm import MultiPartForm
-from common.stringHelpers import md5Sum, randomString, soupParse as parse
+from common.stringHelpers import *
 from ConfigParser import SafeConfigParser
 from UserString import MutableString
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 import json
 import logging
 import multiprocessing
@@ -13,8 +13,6 @@ import requests
 import string
 import sys
 import time
-import urllib
-import urllib2
 
 #       .__    _______                        __         .__       
 #______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____  
@@ -24,7 +22,7 @@ import urllib2
 #|__|        \/       \/     \/     \/                           \/
 #
 #                   ph0neutria malware crawler
-#                             v0.1
+#                             v0.2
 #              https://github.com/t0x0-nz/ph0neutria
 
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -75,13 +73,14 @@ def main():
     else:
         logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
         startMalc0de()
-        startMalShare()
+        #startMalShare()
 
 def startMalc0de():
     for mUrl in getMalc0deList():
-        if not isInViper(url=mUrl):
+        mUrlHash = md5SumString(mUrl)
+        if not isInViper(urlHash=mUrlHash):
             logging.info("Downloading from the wild: {0}".format(mUrl))
-            getWildFile(mUrl)
+            getWildFile(mUrl, mUrlHash)
 
 def startMalShare():
     for mHash in getMalShareList():
@@ -115,7 +114,7 @@ def getMalShareList():
 def getMalc0deList():
     rawList = []
 
-    xml = parse(MALC0DE_URL)
+    xml = soupParse(MALC0DE_URL)
 
     if xml:
         for row in xml('description'):
@@ -126,8 +125,9 @@ def getMalc0deList():
 
         for row in rawList:
             location = re.sub('&amp;','&',str(row).split()[1]).replace(',','')
-            url = 'http://{0}'.format(location)
-            malList.append(url)
+            if location.strip():
+                url = 'http://{0}'.format(location)
+                malList.append(url)
 
         return malList
 
@@ -159,8 +159,10 @@ def getMalShareFile(fileHash):
             open(filePath,"wb").write(response)
             logging.info("Saved as file: {0}".format(filePath))
 
-            tags = getTags(fileHash, "malshare-spider")
-            uploadToViper(filePath, fileHash, tags)
+            url = getMalShareSource(fileHash)
+            fileName = url.split('/')[-1]
+            tags = getTags(fileHash, url, "malshare-spider")
+            uploadToViper(filePath, fileName, tags)
 
             if DELETE_OUTPUT.lower() == "yes":
                 logging.info("Removing file: {0}".format(filePath))
@@ -178,7 +180,7 @@ def getMalShareFile(fileHash):
         logging.exception(e)
         sys.exit(1)
 
-def getWildFile(url):
+def getWildFile(url, urlMD5):
     try:
         userAgent = {'User-agent': USER_AGENT}
 
@@ -190,17 +192,18 @@ def getWildFile(url):
             tmpName = randomString(32)
             tmpFilePath = os.path.join(OUTPUT_FOLDER, tmpName)
             open(tmpFilePath,"wb").write(response)
-            logging.info("Saved as temporary file: {0}".format(tmpFilePath))
+            logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
             # Do not trust wild MD5 sums.
-            fileMd5 = md5Sum(tmpFilePath)
-            filePath = os.path.join(OUTPUT_FOLDER, fileMd5)
-            logging.info("Saved as file: {0}. Checking Viper again.".format(filePath))
+            fileMD5 = md5SumFile(tmpFilePath)
+            filePath = os.path.join(OUTPUT_FOLDER, fileMD5)
+            os.rename(tmpFilePath, filePath)
+            logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
 
-            if not isInViper(fileHash=fileMd5):
-                os.rename(tmpFilePath, filePath)
-                tags = getTags(fileMd5, "wild-spider", source=url)
-                uploadToViper(filePath, fileMd5, tags)
+            if not isInViper(fileHash=fileMD5):
+                fileName = url.split('/')[-1]
+                tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
+                uploadToViper(filePath, fileName, tags)
 
             if DELETE_OUTPUT.lower() == "yes":
                 logging.info("Removing file: {0}".format(filePath))
@@ -219,101 +222,97 @@ def getWildFile(url):
 
 def uploadToViper(filePath, fileName, tags):
     rawFile = open(filePath, 'rb')
-    logging.debug(VIPER_URL_ADD + " file=" + fileName)
 
     try:
-        form = MultiPartForm()
-        form.add_file('file', fileName, fileHandle=rawFile)
-        form.add_field('tags', tags)
-
+        files = {'file': (fileName, rawFile)}
+        tags = {'tags': tags}
+        headers = {'User-agent': USER_AGENT}
+ 
         logging.info("Adding to Viper: {0}".format(fileName))
 
-        request = urllib2.Request(VIPER_URL_ADD)
+        response = requests.post(VIPER_URL_ADD, headers=headers, files=files, data=tags)
 
-        body = str(form)
-        request.add_header('Content-type', form.get_content_type())
-        request.add_header('Content-length', len(body))
-        request.add_data(body)
+        if response.status_code == 200:
+            responsejson = json.loads(response.content)
+            logging.info("Submitted to Viper, message: {0}".format(responsejson["message"]))
 
-        responseData = urllib2.urlopen(request, timeout=60).read()
-        reponsejson = json.loads(responseData)
-        logging.info("Submitted to Viper, message: {0}".format(reponsejson["message"]))
-    except urllib2.URLError as e:
-        logging.info("Non 200 HTTP code: {0}".format(e.code))
-        raise Exception("Unable to establish connection to Viper REST API server: {0}".format(e))
-    except urllib2.HTTPError as e:
-        logging.info("Non 200 HTTP code: {0}".format(e.code))
-        raise Exception("Unable to perform HTTP request to Viper REST API server: {0}".format(e))
-    except ValueError as e:
-        raise Exception("Unable to convert response to JSON: {0}".format(e))
+        else:
+            logging.error("Problem submitting {0} to Viper. Status code: {1}. Continuing.".format(fileName, request.status_code))
 
-    if reponsejson["message"] != 'added':
-        raise Exception("Failed to store file in Viper: {0}".format(reponsejson["message"]))
+    except Exception as e:
+        logging.error("Problem submitting {0} to Viper. Continuing.".format(fileName))
+        logging.exception(sys.exc_info())
+        logging.exception(type(e))
+        logging.exception(e.args)
+        logging.exception(e)
+        #sys.exit(1)
 
-def getTags(fileHash, agent, source=None):
-    tags = MutableString()
+def getMalShareSource(fileHash):
+    try:
+        payload = {'action': 'details', 'api_key': API_KEY, 'hash' : fileHash }
+        userAgent = {'User-agent': USER_AGENT}
 
-    if source is None:
-        try:
-            payload = {'action': 'details', 'api_key': API_KEY, 'hash' : fileHash }
-            userAgent = {'User-agent': USER_AGENT}
+        request = requests.get(MALSHARE_API, params=payload, headers=userAgent)
 
-            request = requests.get(MALSHARE_API, params=payload, headers=userAgent)
-
-            if request.status_code == 200:
-                sources = json.loads(request.content)
-                source = sources['SOURCES'][0]
-            else:
-                logging.error("Problem connecting to MalShare. Status code: {0}. Please try again later.".format(request.status_code))
-                sys.exit(1)
-
-        except Exception as e:
-            logging.error("Problem connecting to MalShare. Please try again later.")
-            logging.exception(sys.exc_info())
-            logging.exception(type(e))
-            logging.exception(e.args)
-            logging.exception(e)
+        if request.status_code == 200:
+            sources = json.loads(request.content)
+            source = sources['SOURCES'][0]
+            return source
+        else:
+            logging.error("Problem connecting to MalShare. Status code: {0}. Please try again later.".format(request.status_code))
             sys.exit(1)
 
-    if source:
-      tags += source
-      tags += ","
+    except Exception as e:
+        logging.error("Problem connecting to MalShare. Please try again later.")
+        logging.exception(sys.exc_info())
+        logging.exception(type(e))
+        logging.exception(e.args)
+        logging.exception(e)
+        sys.exit(1)
+
+def getTags(fileHash, url, agent, urlHash=None):
+    tags = MutableString()
+
     tags += fileHash
     tags += ","
+    tags += url
+    tags += ","
+
+    if not urlHash == None:
+        tags += urlHash
+        tags += ","
+
     tags += agent
 
     logging.info("tags={0}".format(tags))
 
     return str(tags)
 
-def isInViper(fileHash=None,url=None):
+def isInViper(fileHash=None,urlHash=None):
 
     if not fileHash == None:
-        param = { 'md5': fileHash }
+        params = { 'md5': fileHash.lower(), 'project': 'default' }
 
-    if not url == None:
-        param = { 'tag': url }
-
-    param['project'] = 'default'
-
-    requestData = urllib.urlencode(param)
+    if not urlHash == None:
+        # Viper tags are all lowercase - for now.
+        params = { 'tag': urlHash.lower(), 'project': 'default' }
 
     try:
-        request = urllib2.Request(VIPER_URL_FIND, requestData)
-        response = urllib2.urlopen(request, timeout=60)
-        responseData = response.read()
+        userAgent = {'User-agent': USER_AGENT}
 
-    except urllib2.HTTPError as e:
-        if e.code == 400:
-            logging.info("400 Invalid Search Term: ({0})".format(str(param)))
-            return False
-        else:
-            raise Exception("Unable to perform HTTP request to Viper (HTTP code={0})".format(e))
-    except urllib2.URLError as e:
+        response = requests.post(VIPER_URL_FIND, data=params, headers=userAgent)
+
+        if not response.status_code == 200:
+            if response.status_code == 400:
+                logging.info("400 Invalid Search Term: ({0})".format(str(param)))
+                return False
+            else:
+                logging.error("Unable to perform HTTP request to Viper (HTTP code={0})".format(response.status_code))
+    except Exception as e:
         raise Exception("Unable to establish connection to Viper: {0}".format(e))
 
     try:
-        check = json.loads(responseData)
+        check = json.loads(response.content)
         check = check['results']
 
     except ValueError as e:
@@ -326,16 +325,16 @@ def isInViper(fileHash=None,url=None):
             for v in check[i]:
                 if not fileHash == None:
                     if v['md5'] == fileHash:
-                        logging.info("File {0} is in Viper".format(fileHash))
+                        logging.info("File with hash: {0} is in Viper".format(fileHash))
                         return True
-                if not url == None:
-                    if url in v['tags']:
-                        logging.info("File from {0} is in Viper".format(url))
+                if not urlHash == None:
+                    if urlHash in v['tags']:
+                        logging.info("URL with hash: {0} is in Viper".format(urlHash))
                         return True
     if not fileHash == None:
-        logging.info("File {0} is not in Viper".format(fileHash))
-    if not url == None:
-        logging.info("File from {0} is not in Viper".format(url))
+        logging.info("File with hash {0} is not in Viper".format(fileHash))
+    if not urlHash == None:
+        logging.info("URL with hash {0} is not in Viper".format(urlHash))
     return False
 
 if __name__ == "__main__":
