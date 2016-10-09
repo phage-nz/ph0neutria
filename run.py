@@ -23,9 +23,9 @@ import time
 #|   __/|___|  /\_____  /___|  /\___  >____/ |__|  |__|  |__(____  /
 #|__|        \/       \/     \/     \/                           \/
 #
-#                   ph0neutria malware crawler
-#                             v0.3
-#              https://github.com/t0x0-nz/ph0neutria
+#                  ph0neutria malware crawler
+#                            v0.3.1
+#             https://github.com/t0x0-nz/ph0neutria
 
 pwd = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(pwd, 'res', 'banner.txt'), 'r') as banner:
@@ -46,6 +46,7 @@ DELETE_OUTPUT = parser.get("Core", "deleteoutput")
 MALSHARE_API = parser.get("MalShare", "apiurl")
 MALSHARE_DIGEST = parser.get("MalShare", "dailyurl")
 MS_API_KEY = parser.get("MalShare", "apikey")
+DISABLE_MALSHARE = parser.get("MalShare", "disable")
 MALC0DE_URL = parser.get("Malc0de", "url")
 VXVAULT_URL = parser.get("VXVault", "url")
 VIPER_URL_ADD = parser.get("Viper", "addurl")
@@ -59,14 +60,16 @@ def main():
         logging.info("Spawning multiple ph0neutria processes. Press CTRL+C to terminate.")
         webs = []
         malc0deWeb = multiprocessing.Process(target=startMalc0de)
-        malshareWeb = multiprocessing.Process(target=startMalShare)
         vxVaultWeb = multiprocessing.Process(target=startVXVault)
         webs.append(malc0deWeb)
-        webs.append(malshareWeb)
         webs.append(vxVaultWeb)
         malc0deWeb.start()
-        malshareWeb.start()
         vxVaultWeb.start()
+
+        if DISABLE_MALSHARE.lower() == "no":
+            malshareWeb = multiprocessing.Process(target=startMalShare)
+            webs.append(malshareWeb)
+            malshareWeb.start()
 
         try:
             for web in webs:
@@ -80,8 +83,10 @@ def main():
     else:
         logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
         startMalc0de()
-        startMalShare()
         startVXVault()
+
+        if DISABLE_MALSHARE.lower() == "no":
+            startMalShare()
 
 def startMalc0de():
     for mUrl in getMalc0deList():
@@ -196,14 +201,14 @@ def getMalShareFile(fileHash):
         if request.status_code == 200:
             response = request.content
 
-            if response == "Sample not found":
+            if "Sample not found" in response:
                 logging.warning("Sample not found.")
                 return None
-            if response == "ERROR! => Account not activated":
+            if "Account not activated" in response:
                 logging.error("Bad API key.")
                 sys.exit(1)
-            if response == "ERROR! => Over Request Limit.":
-                logging.error("Exceeded MalShare request quota.")
+            if "Over Request Limit" in response:
+                logging.error("Exceeded MalShare request quota. Please temporarily disable MalShare.")
                 sys.exit(1)
 
             tmpName = randomString(32)
@@ -211,7 +216,6 @@ def getMalShareFile(fileHash):
             open(tmpFilePath,"wb").write(response)
             logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
-            # For whatever reason cannot even trust MalShare MD5 sums.
             fileMD5 = md5SumFile(tmpFilePath)
             filePath = os.path.join(OUTPUT_FOLDER, fileMD5)
             os.rename(tmpFilePath, filePath)
@@ -253,7 +257,6 @@ def getWildFile(url, urlMD5):
             open(tmpFilePath,"wb").write(response)
             logging.info("Saved as temporary file: {0}. Calculating MD5.".format(tmpFilePath))
 
-            # Do not trust wild MD5 sums.
             fileMD5 = md5SumFile(tmpFilePath)
             filePath = os.path.join(OUTPUT_FOLDER, fileMD5)
             os.rename(tmpFilePath, filePath)

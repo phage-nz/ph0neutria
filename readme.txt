@@ -6,7 +6,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.3
+                            v0.3.1
              https://github.com/t0x0-nz/ph0neutria
 
 About
@@ -86,11 +86,11 @@ sudo -H -u spider python viper-web
 
 Complete the config file at: /opt/ph0neutria/settings.conf
 
-# Start ph0neutria:
+Start ph0neutria:
 cd /opt/ph0neutria
 sudo -H -u spider python run.py
 
-# You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit.
+You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file.
 
 
 Tags
