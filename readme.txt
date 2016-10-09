@@ -15,8 +15,8 @@ ph0neutria is a malware zoo builder that sources samples from MalShare and the w
 
 This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, formerly known as "Malware Crawler"). However, ph0neutria aims to:
 - Limit the scope of crawling to only frequently updated and reliable sources.
-- Offer a single, reliable and robust storage mechanism.
-- Minimise work that can be done by Viper.
+- Offer a single, reliable and well organised storage mechanism.
+- Not do work that can instead be done by Viper.
 
 What does the name mean? "Phoneutria nigriventer" is commonly known as the Brazillian Wandering Spider: https://en.wikipedia.org/wiki/Brazilian_wandering_spider
 
@@ -92,6 +92,11 @@ sudo -H -u spider python run.py
 
 You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file.
 
+To run this daily, create a script in /etc/cron.daily with the following:
+
+#!/bin/bash
+cd /opt/ph0neutria && sudo -H -u spider python run.py
+
 
 Tags
 """"
@@ -99,9 +104,9 @@ Tags
 
 1) File MD5.
 2) Source domain (see Known Issues).
-2) Source URL (see Known Issues).
-3) URL MD5 (for Wild files only - used for validation).
-4) Source agent (Wild or MalShare).
+3) Source URL (see Known Issues).
+4) URL MD5 (for Wild files only - used for validation).
+5) Source agent (Wild or MalShare).
 
 The original name of the file forms the identifying name within Viper.
 
@@ -109,3 +114,13 @@ The original name of the file forms the identifying name within Viper.
 Known Issues
 """"""""""""
 - Viper tags are forced to lowercase (by Viper). If you do not want this behavior then I'd recommend removing all occurrences of .lower() in viper/viper/core/database.py
+
+
+References and Credits
+""""""""""""""""""""""
+http://malshare.com/doc.php - MalShare API documentation.
+http://viper-framework.readthedocs.io/en/latest/usage/web.html - Viper API documentation.
+http://malshare.com/ - Thanks for the samples.
+http://malc0de.com/ - Thanks for the samples.
+http://vxvault.net/ - Thanks for the samples.
+https://github.com/robbyFux/Ragpicker - Thanks for the inspiration.
