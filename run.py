@@ -24,7 +24,7 @@ import time
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.3.1
+#                            v0.3.2
 #             https://github.com/t0x0-nz/ph0neutria
 
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -43,6 +43,7 @@ USER_AGENT = parser.get("Core", "useragent")
 OUTPUT_FOLDER_NAME = parser.get("Core", "outputfolder")
 OUTPUT_FOLDER = os.path.join(pwd, OUTPUT_FOLDER_NAME)
 DELETE_OUTPUT = parser.get("Core", "deleteoutput")
+DATE_FORMAT = parser.get("Core", "dateformat")
 MALSHARE_API = parser.get("MalShare", "apiurl")
 MALSHARE_DIGEST = parser.get("MalShare", "dailyurl")
 MS_API_KEY = parser.get("MalShare", "apikey")
@@ -349,6 +350,8 @@ def getTags(fileHash, url, agent, urlHash=None):
         tags += urlHash
         tags += ","
 
+    tags += time.strftime(DATE_FORMAT)
+    tags += ","
     tags += agent
 
     logging.debug("tags={0}".format(tags))
