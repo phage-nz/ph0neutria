@@ -6,7 +6,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.3.2
+                            v0.4.0
              https://github.com/t0x0-nz/ph0neutria
 
 About
@@ -19,6 +19,12 @@ This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, f
 - Not do work that can instead be done by Viper.
 
 What does the name mean? "Phoneutria nigriventer" is commonly known as the Brazillian Wandering Spider: https://en.wikipedia.org/wiki/Brazilian_wandering_spider
+
+
+Screenshots
+"""""""""""
+CLI: http://iforce.co.nz/i/2vxu44hz.ipq.png
+Web: http://iforce.co.nz/i/gequzdc5.kmu.png
 
 
 Installation
@@ -90,7 +96,7 @@ Start ph0neutria:
 cd /opt/ph0neutria
 sudo -H -u spider python run.py
 
-You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file.
+You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file. To help reduce the chance of exceeding your limit you can also set 'remotefirst=yes' in the same section - which will first attempt to download the file from it's original host before pulling it from MalShare.
 
 To run this daily, create a script in /etc/cron.daily with the following:
 
@@ -100,13 +106,14 @@ cd /opt/ph0neutria && sudo -H -u spider python run.py
 
 Tags
 """"
-{1},{2},{3},{4},{5}
+{1},{2},{3},{4},{5},{6}
 
 1) File MD5.
 2) Source domain (see Known Issues).
 3) Source URL (see Known Issues).
 4) URL MD5 (for Wild files only - used for validation).
-5) Source agent (Wild or MalShare).
+5) Date stamp.
+6) Source agent (Wild or MalShare).
 
 The original name of the file forms the identifying name within Viper.
 

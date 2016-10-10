@@ -24,7 +24,7 @@ import time
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.3.2
+#                            v0.4.0
 #             https://github.com/t0x0-nz/ph0neutria
 
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -48,6 +48,7 @@ MALSHARE_API = parser.get("MalShare", "apiurl")
 MALSHARE_DIGEST = parser.get("MalShare", "dailyurl")
 MS_API_KEY = parser.get("MalShare", "apikey")
 DISABLE_MALSHARE = parser.get("MalShare", "disable")
+MS_REMOTE_FIRST = parser.get("MalShare", "remotefirst")
 MALC0DE_URL = parser.get("Malc0de", "url")
 VXVAULT_URL = parser.get("VXVault", "url")
 VIPER_URL_ADD = parser.get("Viper", "addurl")
@@ -99,8 +100,17 @@ def startMalc0de():
 def startMalShare():
     for mHash in getMalShareList():
         if not isInViper(fileHash=mHash):
-            logging.info("Downloading from MalShare: {0}".format(mHash))
-            getMalShareFile(mHash)
+            if MS_REMOTE_FIRST.lower() == "yes":
+                mUrl = getMalShareSource(mHash)
+                mUrlHash = md5SumString(mUrl)
+                logging.info("Attempting remote download first: {0}".format(mUrl))
+                if not isInViper(urlHash=mUrlHash):
+                    if not getWildFile(mUrl, mUrlHash):
+                        logging.info("Remote download failed. Downloading from MalShare: {0}".format(mHash))
+                        getMalShareFile(mHash)
+            else:
+                logging.info("Downloading from MalShare: {0}".format(mHash))
+                getMalShareFile(mHash)
 
 def startVXVault():
     for vUrl in getVXList():
@@ -228,9 +238,16 @@ def getMalShareFile(fileHash):
                 tags = getTags(fileMD5, url, "malshare-spider")
                 uploadToViper(filePath, fileName, tags)
 
-            if DELETE_OUTPUT.lower() == "yes":
+                if DELETE_OUTPUT.lower() == "yes":
+                    logging.info("Removing file: {0}".format(filePath))
+                    os.remove(filePath)
+
+                return True
+
+            else:
                 logging.info("Removing file: {0}".format(filePath))
                 os.remove(filePath)
+                return False
 
         else:
             logging.error("Problem connecting to MalShare. Status code: {0}. Please try again later.".format(request.status_code))
@@ -268,15 +285,24 @@ def getWildFile(url, urlMD5):
                 tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
                 uploadToViper(filePath, fileName, tags)
 
-            if DELETE_OUTPUT.lower() == "yes":
+                if DELETE_OUTPUT.lower() == "yes":
+                    logging.info("Removing file: {0}".format(filePath))
+                    os.remove(filePath)
+
+                return True
+
+            else:
                 logging.info("Removing file: {0}".format(filePath))
                 os.remove(filePath)
+                return False
  
         else:
             logging.warning("Problem connecting to {0}. Status code: {1}. Continuing.".format(url, request.status_code))
+            return False
 
     except requests.exceptions.ConnectionError as e:
         logging.warning("Problem connecting to {0}. Error: {1}".format(url, e))
+        return False
 
     except Exception as e:
         logging.warning("Problem connecting to {0}. Continuing.".format(url))
@@ -284,6 +310,7 @@ def getWildFile(url, urlMD5):
         logging.exception(type(e))
         logging.exception(e.args)
         logging.exception(e)
+        return False
         #sys.exit(1)
 
 def uploadToViper(filePath, fileName, tags):
@@ -301,9 +328,11 @@ def uploadToViper(filePath, fileName, tags):
         if response.status_code == 200:
             responsejson = json.loads(response.content)
             logging.info("Submitted to Viper, message: {0}".format(responsejson["message"]))
+            return True
 
         else:
             logging.warning("Problem submitting {0} to Viper. Status code: {1}. Continuing.".format(fileName, response.status_code))
+            return False
 
     except Exception as e:
         logging.warning("Problem submitting {0} to Viper. Continuing.".format(fileName))
@@ -311,6 +340,7 @@ def uploadToViper(filePath, fileName, tags):
         logging.exception(type(e))
         logging.exception(e.args)
         logging.exception(e)
+        return False
         #sys.exit(1)
 
 def getMalShareSource(fileHash):
