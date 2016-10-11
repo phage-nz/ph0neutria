@@ -23,8 +23,8 @@ What does the name mean? "Phoneutria nigriventer" is commonly known as the Brazi
 
 Screenshots
 """""""""""
-CLI: http://iforce.co.nz/i/2vxu44hz.ipq.png
-Web: http://iforce.co.nz/i/gequzdc5.kmu.png
+CLI: http://iforce.co.nz/i/jc4hmd2f.0sc.png
+Web: http://iforce.co.nz/i/dws1yb4z.zx4.png
 
 
 Installation
