@@ -93,7 +93,12 @@ def isNewEntry(fileHash=None,urlHash=None):
 
     try:
         check = json.loads(response.content)
-        check = check['results']
+
+        if check['results']:
+            check = check['results']
+        else:
+            logging.warning("Results key not present in JSON response.")
+            return False
 
     except ValueError as e:
         raise Exception("Unable to convert response to JSON: {0}".format(e))
