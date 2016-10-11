@@ -1,22 +1,30 @@
 #!/usr/bin/python
 from BeautifulSoup import BeautifulSoup as bs
+from ConfigUtils import getBaseConfig
+from LogUtils import getModuleLogger
 import hashlib
+import os
 import random
 import requests
 import string 
 import urllib2
 import validators
 
+cDir = os.path.dirname(os.path.realpath(__file__))
+rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
+baseConfig = getBaseConfig(rootDir)
+logging = getModuleLogger(__name__)
+
 def isValidUrl(url):
     return validators.url(url)
 
-def soupParse(url):
+def soupParse(userAgent, url):
 	request = urllib2.Request(url)
-	request.add_header('User-Agent', 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1)')
+	request.add_header('User-Agent', baseConfig.userAgent)
 	try:
 		http = bs(urllib2.urlopen(request))
 	except:
-		print "- Error parsing %s" % (url)
+		logging.error("Error parsing: {0}".format(url))
 		return
 	return http
 
