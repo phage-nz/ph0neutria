@@ -3,7 +3,7 @@ from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from StringUtils import md5SumFile, randomString
 from urlparse import urlparse
-from ViperUtils import getTags, uploadToViper, isInViper
+from ViperUtils import getTags, uploadToViper, isNewEntry
 import json
 import os
 import requests
