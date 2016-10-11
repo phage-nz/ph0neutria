@@ -87,6 +87,7 @@ def isNewEntry(fileHash=None,urlHash=None):
                 return False
             else:
                 logging.warning("Unable to perform HTTP request to Viper (HTTP code={0})".format(response.status_code))
+                return False
     except Exception as e:
         raise Exception("Unable to establish connection to Viper: {0}".format(e))
         return False

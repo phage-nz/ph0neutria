@@ -76,7 +76,7 @@ def getMalShareFile(fileHash):
 
             if "Sample not found" in response:
                 logging.warning("Sample not found.")
-                return None
+                return False
             if "Account not activated" in response:
                 logging.error("Bad API key.")
                 sys.exit(1)

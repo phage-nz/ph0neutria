@@ -61,7 +61,7 @@ def main():
         startMalc0de()
         startVXVault()
 
-        if baseConfig.deleteOutput.lower() == "no":
+        if baseConfig.disableMalShare.lower() == "no":
             startMalShare()
 
 def startMalc0de():
