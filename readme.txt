@@ -11,7 +11,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 
 About
 """""
-ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the Malc0de and VX Vault databases). All fetched samples are stored in Viper for ease of access.
+ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the MalShare, Malc0de and VX Vault databases). All fetched samples are stored in Viper for ease of access.
 
 This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, formerly known as "Malware Crawler"). However, ph0neutria aims to:
 - Limit the scope of crawling to only frequently updated and reliable sources.
@@ -90,18 +90,23 @@ Start the Viper web interface:
 cd /opt/viper
 sudo -H -u spider python viper-web
 
-Complete the config file at: /opt/ph0neutria/settings.conf
+Complete the config file at: /opt/ph0neutria/config/settings.conf
 
 Start ph0neutria:
 cd /opt/ph0neutria
 sudo -H -u spider python run.py
 
-You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates. Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file. To help reduce the chance of exceeding your limit you can also set 'remotefirst=yes' in the same section - which will first attempt to download the file from it's original host before pulling it from MalShare.
+You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates.
 
 To run this daily, create a script in /etc/cron.daily with the following:
 
 #!/bin/bash
 cd /opt/ph0neutria && sudo -H -u spider python run.py
+
+
+MalShare Notes
+""""""""""""""
+Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file so you can continue pulling from other sources. To help reduce the chance of exceeding your limit you can also set 'remotefirst=yes' in the same section - which will first attempt to download the file from it's original host before pulling it from MalShare.
 
 
 Tags
