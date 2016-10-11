@@ -3,7 +3,7 @@ from util.ConfigUtils import getBaseConfig
 from util.FileUtils import getWildFile
 from util.LogUtils import getModuleLogger
 from util.Malc0de import getMalc0deList
-from util.MalShare import getMalShareList, getMalShareSource, getMalShareFile
+from util.MalShare import getMalShareDigest, getMalShareList, getMalShareSource, getMalShareFile
 from util.StringUtils import md5SumString
 from util.ViperUtils import isNewEntry
 from util.VxVault import getVXList
@@ -18,7 +18,7 @@ import os
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.4.2
+#                            v0.4.3
 #             https://github.com/t0x0-nz/ph0neutria
 
 rootDir = os.path.dirname(os.path.realpath(__file__))
@@ -72,19 +72,27 @@ def startMalc0de():
             getWildFile(mUrl, mUrlHash)
 
 def startMalShare():
-    for mHash in getMalShareList():
-        if isNewEntry(fileHash=mHash):
-            if baseConfig.malShareRemoteFirst.lower() == "yes":
-                mUrl = getMalShareSource(mHash)
-                mUrlHash = md5SumString(mUrl)
-                logging.info("Attempting remote download first: {0}".format(mUrl))
-                if isNewEntry(urlHash=mUrlHash):
-                    if not getWildFile(mUrl, mUrlHash):
-                        logging.info("Remote download failed. Downloading from MalShare: {0}".format(mHash))
-                        getMalShareFile(mHash)
-            else:
-                logging.info("Downloading from MalShare: {0}".format(mHash))
-                getMalShareFile(fileHash)
+    if baseConfig.malShareRemoteOnly.lower() == "yes":
+        for mUrl in getMalShareList():
+            mUrlHash = md5SumString(mUrl)
+            if isNewEntry(urlHash=mUrlHash):
+                logging.info("Downloading from the wild: {0}".format(mUrl))
+                getWildFile(mUrl, mUrlHash)
+
+    else:
+        for mHash in getMalShareDigest():
+            if isNewEntry(fileHash=mHash):
+                if baseConfig.malShareRemoteFirst.lower() == "yes":
+                    mUrl = getMalShareSource(mHash)
+                    mUrlHash = md5SumString(mUrl)
+                    logging.info("Attempting remote download first: {0}".format(mUrl))
+                    if isNewEntry(urlHash=mUrlHash):
+                        if not getWildFile(mUrl, mUrlHash):
+                            logging.info("Remote download failed. Downloading from MalShare: {0}".format(mHash))
+                            getMalShareFile(mHash)
+                else:
+                    logging.info("Downloading from MalShare: {0}".format(mHash))
+                    getMalShareFile(fileHash)
 
 def startVXVault():
     for vUrl in getVXList():

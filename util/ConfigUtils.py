@@ -3,7 +3,7 @@ from ConfigParser import SafeConfigParser
 import os
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareDigest, malShareApiKey, disableMalShare, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
@@ -11,9 +11,9 @@ class baseObj:
         self.deleteOutput = deleteOutput
         self.dateFormat = dateFormat
         self.malShareApi = malShareApi
-        self.malShareDigest = malShareDigest
         self.malShareApiKey = malShareApiKey
         self.disableMalShare = disableMalShare
+        self.malShareRemoteOnly = malShareRemoteOnly
         self.malShareRemoteFirst = malShareRemoteFirst
         self.malc0deUrl = malc0deUrl
         self.vxVaultUrl = vxVaultUrl
@@ -31,13 +31,13 @@ def getBaseConfig(rootDir):
     deleteOutput = parser.get("Core", "deleteoutput")
     dateFormat = parser.get("Core", "dateformat")
     malShareApi = parser.get("MalShare", "apiurl")
-    malShareDigest = parser.get("MalShare", "dailyurl")
     malShareApiKey = parser.get("MalShare", "apikey")
     disableMalShare = parser.get("MalShare", "disable")
+    malShareRemoteOnly = parser.get("MalShare", "remoteonly")
     malShareRemoteFirst = parser.get("MalShare", "remotefirst")
     malc0deUrl = parser.get("Malc0de", "url")
     vxVaultUrl = parser.get("VXVault", "url")
     viperUrlAdd = parser.get("Viper", "addurl")
     viperUrlFind = parser.get("Viper", "findurl")
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareDigest, malShareApiKey, disableMalShare, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
 

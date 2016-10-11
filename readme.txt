@@ -6,7 +6,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.4.2
+                            v0.4.3
              https://github.com/t0x0-nz/ph0neutria
 
 About
@@ -106,7 +106,11 @@ cd /opt/ph0neutria && sudo -H -u spider python run.py
 
 MalShare Notes
 """"""""""""""
-Just be mindful of your daily MalShare request limit. If you run over the limit, set 'disable=yes' in the [MalShare] section of the config file so you can continue pulling from other sources. To help reduce the chance of exceeding your limit you can also set 'remotefirst=yes' in the same section - which will first attempt to download the file from it's original host before pulling it from MalShare.
+Just be mindful of your daily MalShare request limit. ph0neutria offers a few options in the [MalShare] section of the config file to help control this:
+
+- Set 'disable=yes' to disable MalShare so you can continue pulling from other sources.
+- Set 'remotefirst=yes' to attempt to download the file from it's original location before pulling it from MalShare.
+- Set 'remoteonly=yes' to only pull down the MalShare daily source list and pull directly from the sources. Only use this option if you're not concerned about the files (potentially) being removed already.
 
 
 Tags

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
-from StringUtils import md5SumFile, randomString
+from StringUtils import isValidUrl, md5SumFile, randomString
 from urlparse import urlparse
 from ViperUtils import getTags, uploadToViper, isNewEntry
 import json
@@ -14,13 +14,14 @@ rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
 baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
-def getMalShareList():
+def getMalShareDigest():
     try:
+        payload = {'action': 'getlistraw', 'api_key': baseConfig.malShareApiKey }
         userAgent = {'User-agent': baseConfig.userAgent}
 
-        logging.info("Fetching latest MalShare list.")
+        logging.info("Fetching latest MalShare MD5 list.")
 
-        request = requests.get(baseConfig.malShareDigest, headers=userAgent)
+        request = requests.get(baseConfig.malShareApi, params=payload, headers=userAgent)
 
         if request.status_code == 200:
             malList = []
@@ -29,6 +30,36 @@ def getMalShareList():
                 malList.append(line.strip())
             return malList
 
+        else:
+            logging.error("Problem connecting to MalShare. Status code:{0}. Please try again later.".format(request.status_code))
+            sys.exit(1)
+
+    except Exception as e:
+        logging.error("Problem connecting to MalShare. Please try again later.")
+        logging.exception(sys.exc_info())
+        logging.exception(type(e))
+        logging.exception(e.args)
+        logging.exception(e)
+        sys.exit(1)
+
+def getMalShareList():
+    try:
+        payload = {'action': 'getsourcesraw', 'api_key': baseConfig.malShareApiKey }
+        userAgent = {'User-agent': baseConfig.userAgent}
+
+        logging.info("Fetching latest MalShare Source list.")
+
+        request = requests.get(baseConfig.malShareApi, params=payload, headers=userAgent)
+
+        if request.status_code == 200:
+            malList = []
+
+            for line in request.content.split('\n'):
+                url = line.strip()
+                if isValidUrl(url):
+                    malList.append(url)
+            return malList
+                
         else:
             logging.error("Problem connecting to MalShare. Status code:{0}. Please try again later.".format(request.status_code))
             sys.exit(1)
