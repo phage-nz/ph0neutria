@@ -67,7 +67,7 @@ def getTags(fileHash, url, agent, urlHash=None):
 
     return str(tags)
 
-def isInViper(fileHash=None,urlHash=None):
+def isNewEntry(fileHash=None,urlHash=None):
 
     if not fileHash == None:
         params = { 'md5': fileHash.lower(), 'project': 'default' }
@@ -89,6 +89,7 @@ def isInViper(fileHash=None,urlHash=None):
                 logging.warning("Unable to perform HTTP request to Viper (HTTP code={0})".format(response.status_code))
     except Exception as e:
         raise Exception("Unable to establish connection to Viper: {0}".format(e))
+        return False
 
     try:
         check = json.loads(response.content)
@@ -96,6 +97,7 @@ def isInViper(fileHash=None,urlHash=None):
 
     except ValueError as e:
         raise Exception("Unable to convert response to JSON: {0}".format(e))
+        return False
 
     for i in check:
         if str(i) == "../":
@@ -105,14 +107,16 @@ def isInViper(fileHash=None,urlHash=None):
                 if not fileHash == None:
                     if v['md5'] == fileHash:
                         logging.info("File with hash: {0} is in Viper".format(fileHash))
-                        return True
+                        return False
                 if not urlHash == None:
                     if urlHash in v['tags']:
                         logging.info("URL with hash: {0} is in Viper".format(urlHash))
-                        return True
+                        return False
     if not fileHash == None:
         logging.info("File with hash {0} is not in Viper".format(fileHash))
+        return True
     if not urlHash == None:
         logging.info("URL with hash {0} is not in Viper".format(urlHash))
+        return True
     return False
 

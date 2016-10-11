@@ -2,7 +2,7 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from StringUtils import md5SumFile, randomString
-from ViperUtils import getTags, uploadToViper, isInViper
+from ViperUtils import getTags, uploadToViper, isNewEntry
 import os
 import requests
 import sys
@@ -31,7 +31,7 @@ def getWildFile(url, urlMD5):
             os.rename(tmpFilePath, filePath)
             logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
 
-            if not isInViper(fileHash=fileMD5):
+            if isNewEntry(fileHash=fileMD5):
                 fileName = url.split('/')[-1]
                 tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
                 uploadToViper(filePath, fileName, tags)

@@ -94,7 +94,7 @@ def getMalShareFile(fileHash):
             os.rename(tmpFilePath, filePath)
             logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
 
-            if not isInViper(fileHash=fileMD5):
+            if isNewEntry(fileHash=fileMD5):
                 url = getMalShareSource(fileHash)
                 fileName = url.split('/')[-1]
                 tags = getTags(fileMD5, url, "malshare-spider")
