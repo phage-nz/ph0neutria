@@ -34,9 +34,9 @@ apt-get update
 apt-get ugprade -y
 
 # Install prereq's:
-apt-get -f install autoconf git libssl-dev swig libfuzzy-dev libffi-dev libjansson-dev libmagic-dev libtool python-pip -y
+apt-get -f install autoconf clamav clamav-daemon clamav-freshclam git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libtool python-pip swig  -y
 pip install --upgrade pip
-pip install BeautifulSoup coloredlogs SQLAlchemy PrettyTable python-magic requests_toolbelt validators
+pip install BeautifulSoup coloredlogs pyclamd PrettyTable python-magic requests_toolbelt SQLAlchemy validators
 cd ~
 wget http://heanet.dl.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz
 tar -xzvf ssdeep-2.13.tar.gz
@@ -45,6 +45,11 @@ cd ssdeep-2.13
 sudo make install
 sudo pip install pydeep
 cd ..
+git clone https://github.com/smarnach/pyexiftool
+cd pyexiftool
+sudo python setup.py install
+cd ..
+rm -rf pyexiftool
 rm -rf ssdeep-2.13
 git clone https://github.com/plusvic/yara
 cd yara
@@ -77,6 +82,11 @@ chown spider:spider /home/spider
 chown -R spider:spider /opt/viper
 chown -R spider:spider /opt/ph0neutria
 
+# Configure ClamAV group membership:
+usermod -a -G spider clamav
+# Edit /etc/clamav/clamd.conf and set AllowSupplementaryGroups to true
+/etc/init.d/clamav-daemon restart
+
 
 Usage
 """""
@@ -91,6 +101,7 @@ cd /opt/viper
 sudo -H -u spider python viper-web
 
 Complete the config file at: /opt/ph0neutria/config/settings.conf
+Complete the config file at: /home/spider/.viper/viper.conf
 
 Start ph0neutria:
 cd /opt/ph0neutria
