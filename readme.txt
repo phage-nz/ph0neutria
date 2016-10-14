@@ -87,6 +87,29 @@ usermod -a -G spider clamav
 # Edit /etc/clamav/clamd.conf and set AllowSupplementaryGroups to true
 /etc/init.d/clamav-daemon restart
 
+# Optional: Configure additional ClamAV signatures:
+cd /tmp
+git clone https://github.com/extremeshok/clamav-unofficial-sigs
+cd clamav-unofficial-sigs
+cp clamav-unofficial-sigs.sh /usr/local/bin
+chmod 755 /usr/local/bin/clamav-unofficial-sigs.sh
+mkdir /etc/clamav-unofficial-sigs
+cp config/* /etc/clamav-unofficial-sigs
+# Rename os.<yourdistro>.conf to os.conf, for example:
+mv os.ubuntu.conf os.conf
+# Modify configuration files:
+# master.conf: search for "Enabled Databases" and enable/disable desired sources.
+# user.conf: uncomment the required lines for sources you have enabled and complete them. user.conf overrides master.conf.
+# For more configuration info see: https://github.com/extremeshok/clamav-unofficial-sigs
+mkdir /var/log/clamav-unofficial-sigs
+clamav-unofficial-sigs.sh --install-cron
+clamav-unofficial-sigs.sh --install-logrotate
+clamav-unofficial-sigs.sh --install-man
+clamav-unofficial-sigs.sh
+cp systemd/* /etc/systemd
+cd ..
+rm -rf clamav-unofficial-sigs
+
 
 Usage
 """""
