@@ -3,7 +3,7 @@ from ConfigParser import SafeConfigParser
 import os
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
@@ -16,6 +16,7 @@ class baseObj:
         self.malShareRemoteOnly = malShareRemoteOnly
         self.malShareRemoteFirst = malShareRemoteFirst
         self.malc0deUrl = malc0deUrl
+        self.minotaurUrl = minotaurUrl
         self.vxVaultUrl = vxVaultUrl
         self.viperUrlAdd = viperUrlAdd
         self.viperUrlFind = viperUrlFind
@@ -36,8 +37,9 @@ def getBaseConfig(rootDir):
     malShareRemoteOnly = parser.get("MalShare", "remoteonly")
     malShareRemoteFirst = parser.get("MalShare", "remotefirst")
     malc0deUrl = parser.get("Malc0de", "url")
+    minotaurUrl = parser.get("Minotaur", "url")
     vxVaultUrl = parser.get("VXVault", "url")
     viperUrlAdd = parser.get("Viper", "addurl")
     viperUrlFind = parser.get("Viper", "findurl")
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
 

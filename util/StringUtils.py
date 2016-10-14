@@ -18,7 +18,7 @@ logging = getModuleLogger(__name__)
 def isValidUrl(url):
     return validators.url(url)
 
-def soupParse(userAgent, url):
+def soupParse(url):
 	request = urllib2.Request(url)
 	request.add_header('User-Agent', baseConfig.userAgent)
 	try:

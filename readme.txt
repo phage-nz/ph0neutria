@@ -6,12 +6,12 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.4.3
+                            v0.5.0
              https://github.com/t0x0-nz/ph0neutria
 
 About
 """""
-ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the MalShare, Malc0de and VX Vault databases). All fetched samples are stored in Viper for ease of access.
+ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the MalShare, Malc0de, Minotaur and VX Vault databases). All fetched samples are stored in Viper for ease of access.
 
 This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, formerly known as "Malware Crawler"). However, ph0neutria aims to:
 - Limit the scope of crawling to only frequently updated and reliable sources.
@@ -95,20 +95,23 @@ cp clamav-unofficial-sigs.sh /usr/local/bin
 chmod 755 /usr/local/bin/clamav-unofficial-sigs.sh
 mkdir /etc/clamav-unofficial-sigs
 cp config/* /etc/clamav-unofficial-sigs
+cd /etc/clamav-unofficial-sigs
 # Rename os.<yourdistro>.conf to os.conf, for example:
 mv os.ubuntu.conf os.conf
 # Modify configuration files:
 # master.conf: search for "Enabled Databases" and enable/disable desired sources.
-# user.conf: uncomment the required lines for sources you have enabled and complete them. user.conf overrides master.conf.
+# user.conf: uncomment the required lines for sources you have enabled and complete them. user.conf overrides master.conf. You must uncomment user_configuration_complete="yes" once you've completed setup for the following commands to succeed.
 # For more configuration info see: https://github.com/extremeshok/clamav-unofficial-sigs
 mkdir /var/log/clamav-unofficial-sigs
 clamav-unofficial-sigs.sh --install-cron
 clamav-unofficial-sigs.sh --install-logrotate
 clamav-unofficial-sigs.sh --install-man
 clamav-unofficial-sigs.sh
+cd /tmp/clamav-unofficial-sigs
 cp systemd/* /etc/systemd
 cd ..
 rm -rf clamav-unofficial-sigs
+# It'll take a while to pull down the new signatures - during which time ClamAV may not be available.
 
 
 Usage
@@ -170,7 +173,8 @@ References and Credits
 """"""""""""""""""""""
 http://malshare.com/doc.php - MalShare API documentation.
 http://viper-framework.readthedocs.io/en/latest/usage/web.html - Viper API documentation.
-http://malshare.com/ - Thanks for the samples.
-http://malc0de.com/ - Thanks for the samples.
-http://vxvault.net/ - Thanks for the samples.
+http://malshare.com/ - Thanks for the intel and samples.
+http://malc0de.com/ - Thanks for the intel.
+http://minotauranalysis.com/ - Thanks for the intel.
+http://vxvault.net/ - Thanks for the intel.
 https://github.com/robbyFux/Ragpicker - Thanks for the inspiration.

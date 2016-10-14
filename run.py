@@ -4,6 +4,7 @@ from util.FileUtils import getWildFile
 from util.LogUtils import getModuleLogger
 from util.Malc0de import getMalc0deList
 from util.MalShare import getMalShareDigest, getMalShareList, getMalShareSource, getMalShareFile
+from util.Minotaur import getMinotaurList
 from util.StringUtils import md5SumString
 from util.ViperUtils import isNewEntry
 from util.VxVault import getVXList
@@ -18,7 +19,7 @@ import os
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.4.3
+#                            v0.5.0
 #             https://github.com/t0x0-nz/ph0neutria
 
 rootDir = os.path.dirname(os.path.realpath(__file__))
@@ -36,10 +37,13 @@ def main():
         logging.info("Spawning multiple ph0neutria processes. Press CTRL+C to terminate.")
         webs = []
         malc0deWeb = multiprocessing.Process(target=startMalc0de)
+        minotaurWeb = multiprocessing.Process(target=startMinotaur)
         vxVaultWeb = multiprocessing.Process(target=startVXVault)
         webs.append(malc0deWeb)
+        webs.append(minotaurWeb)
         webs.append(vxVaultWeb)
         malc0deWeb.start()
+        minotaurWeb.start()
         vxVaultWeb.start()
 
         if baseConfig.disableMalShare.lower() == "no":
@@ -59,6 +63,7 @@ def main():
     else:
         logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
         startMalc0de()
+        startMinotaur()
         startVXVault()
 
         if baseConfig.disableMalShare.lower() == "no":
@@ -66,6 +71,13 @@ def main():
 
 def startMalc0de():
     for mUrl in getMalc0deList():
+        mUrlHash = md5SumString(mUrl)
+        if isNewEntry(urlHash=mUrlHash):
+            logging.info("Downloading from the wild: {0}".format(mUrl))
+            getWildFile(mUrl, mUrlHash)
+
+def startMinotaur():
+    for mUrl in getMinotaurList():
         mUrlHash = md5SumString(mUrl)
         if isNewEntry(urlHash=mUrlHash):
             logging.info("Downloading from the wild: {0}".format(mUrl))

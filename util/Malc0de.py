@@ -16,7 +16,7 @@ def getMalc0deList():
 
     logging.info("Fetching latest Malc0de list.")
 
-    xml = soupParse(baseConfig.userAgent, baseConfig.malc0deUrl)
+    xml = soupParse(baseConfig.malc0deUrl)
 
     if xml:
         for row in xml('description'):
