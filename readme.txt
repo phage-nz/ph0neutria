@@ -7,7 +7,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 
                   ph0neutria malware crawler
                             v0.5.0
-             https://github.com/t0x0-nz/ph0neutria
+             https://github.com/phage-nz/ph0neutria
 
 About
 """""
@@ -73,7 +73,7 @@ make install
 
 # Clone ph0neutria:
 cd /opt
-git clone https://github.com/t0x0-nz/ph0neutria
+git clone https://github.com/phage-nz/ph0neutria
 
 # Create user:
 useradd -r -s /bin/false spider

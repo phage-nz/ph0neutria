@@ -20,7 +20,7 @@ import os
 #
 #                  ph0neutria malware crawler
 #                            v0.5.0
-#             https://github.com/t0x0-nz/ph0neutria
+#             https://github.com/phage-nz/ph0neutria
 
 rootDir = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(rootDir, 'res', 'banner.txt'), 'r') as banner:
