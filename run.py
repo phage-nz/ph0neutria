@@ -19,7 +19,7 @@ import os
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.5.0
+#                            v0.6.0
 #             https://github.com/phage-nz/ph0neutria
 
 rootDir = os.path.dirname(os.path.realpath(__file__))

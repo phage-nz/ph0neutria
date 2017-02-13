@@ -1,9 +1,9 @@
 #!/usr/bin/python
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
-from StringUtils import isValidUrl, soupParse
+from StringUtils import isValidUrl
 import os
-import re
+import requests
 import sys
 
 cDir = os.path.dirname(os.path.realpath(__file__))
@@ -12,27 +12,30 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 def getMinotaurList():
-    logging.info("Fetching latest Minotaur list.")
+    try:
+        userAgent = {'User-agent': baseConfig.userAgent}
 
-    html = soupParse(baseConfig.minotaurUrl)    
+        logging.info("Fetching latest Minotaur list.")
 
-    if html:
-        malList = []
+        request = requests.get(baseConfig.minotaurUrl, headers=userAgent)
 
-        urlTable = html.find("div", {"id": "mtabs-2"}).find("table", {"class": "hometable2"})
-        if urlTable:
-            for row in urlTable.findAll("tr")[1:]:
-                elements = row.findAll('td')
-                if len(elements) == 4:
-                    url = elements[3].text.strip()
-                    if isValidUrl(url):
-                        malList.append(url)
+        if request.status_code == 200:
+            malList = []
 
+            for line in request.content.split('\n'):
+                url = line.strip()
+                if isValidUrl(url):
+                    malList.append(url)
             return malList
+                
         else:
-            logging.error("Failed to locate Minotaur URL table. Ensure that this is the latest ph0neutria release.")
+            logging.error("Problem connecting to Minotaur. Status code:{0}. Please try again later.".format(request.status_code))
             sys.exit(1)
 
-    else:
-        logging.error("Empty Minotaur XML. Potential connection error. Please try again later.")
+    except Exception as e:
+        logging.error("Problem connecting to Minotaur. Please try again later.")
+        logging.exception(sys.exc_info())
+        logging.exception(type(e))
+        logging.exception(e.args)
+        logging.exception(e)
         sys.exit(1)

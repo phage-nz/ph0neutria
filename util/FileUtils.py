@@ -16,7 +16,12 @@ def getWildFile(url, urlMD5):
     try:
         userAgent = {'User-agent': baseConfig.userAgent}
 
-        request = requests.get(url, headers=userAgent)
+        if baseConfig.useTor == 'yes':
+            torProxy = 'socks5://localhost:{0}'.format(baseConfig.torPort)
+            proxies = {'http': torProxy, 'https': torProxy}
+            request = requests.get(url, headers=userAgent, proxies=proxies)
+        else:
+            request = requests.get(url, headers=userAgent)
 
         if request.status_code == 200:
             response = request.content

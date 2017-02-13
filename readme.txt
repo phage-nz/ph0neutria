@@ -6,7 +6,7 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.5.0
+                            v0.6.0
              https://github.com/phage-nz/ph0neutria
 
 About
@@ -27,6 +27,11 @@ CLI: http://iforce.co.nz/i/yoxgsguf.cof.png
 Web: http://iforce.co.nz/i/dws1yb4z.zx4.png
 
 
+Version Notes
+"""""""""""""
+- 0.6.0: Tor proxying requires pysocks (pip install pysocks) and at least version 2.10.0 of python requests for SOCKS proxy support.
+
+
 Installation
 """"""""""""
 # Update box:
@@ -36,7 +41,7 @@ apt-get ugprade -y
 # Install prereq's:
 apt-get -f install autoconf clamav clamav-daemon clamav-freshclam git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libtool python-pip swig  -y
 pip install --upgrade pip
-pip install BeautifulSoup coloredlogs pyclamd PrettyTable python-magic requests_toolbelt SQLAlchemy validators
+pip install BeautifulSoup coloredlogs pyclamd PrettyTable pysocks python-magic requests requests_toolbelt SQLAlchemy validators
 cd ~
 wget http://heanet.dl.sourceforge.net/project/ssdeep/ssdeep-2.13/ssdeep-2.13.tar.gz
 tar -xzvf ssdeep-2.13.tar.gz

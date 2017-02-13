@@ -18,16 +18,6 @@ logging = getModuleLogger(__name__)
 def isValidUrl(url):
     return validators.url(url)
 
-def soupParse(url):
-	request = urllib2.Request(url)
-	request.add_header('User-Agent', baseConfig.userAgent)
-	try:
-		http = bs(urllib2.urlopen(request))
-	except:
-		logging.error("Error parsing: {0}".format(url))
-		return
-	return http
-
 def randomString(length):
    return ''.join(random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for i in range(length))
 

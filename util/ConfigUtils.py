@@ -3,13 +3,15 @@ from ConfigParser import SafeConfigParser
 import os
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, useTor, torPort, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
         self.outputFolder = outputFolder
         self.deleteOutput = deleteOutput
         self.dateFormat = dateFormat
+        self.useTor = useTor
+        self.torPort = torPort
         self.malShareApi = malShareApi
         self.malShareApiKey = malShareApiKey
         self.disableMalShare = disableMalShare
@@ -31,6 +33,8 @@ def getBaseConfig(rootDir):
     outputFolder = os.path.join(rootDir, outputFolderName)
     deleteOutput = parser.get("Core", "deleteoutput")
     dateFormat = parser.get("Core", "dateformat")
+    useTor = parser.get("Core", "usetor")
+    torPort = parser.get("Core", "torport")
     malShareApi = parser.get("MalShare", "apiurl")
     malShareApiKey = parser.get("MalShare", "apikey")
     disableMalShare = parser.get("MalShare", "disable")
@@ -41,5 +45,5 @@ def getBaseConfig(rootDir):
     vxVaultUrl = parser.get("VXVault", "url")
     viperUrlAdd = parser.get("Viper", "addurl")
     viperUrlFind = parser.get("Viper", "findurl")
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, useTor, torPort, malShareApi, malShareApiKey, disableMalShare, malShareRemoteOnly, malShareRemoteFirst, malc0deUrl, minotaurUrl, vxVaultUrl, viperUrlAdd, viperUrlFind)
 
