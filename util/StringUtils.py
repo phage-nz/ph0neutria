@@ -15,6 +15,16 @@ rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
 baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
+def soupParse(url):
+	request = urllib2.Request(url)
+	request.add_header('User-Agent', baseConfig.userAgent)
+	try:
+		http = bs(urllib2.urlopen(request))
+	except:
+		logging.error("Error parsing: {0}".format(url))
+		return
+	return http
+
 def isValidUrl(url):
     return validators.url(url)
 
