@@ -38,7 +38,10 @@ def getWildFile(url, urlMD5):
 
             if isNewEntry(fileHash=fileMD5):
                 fileName = url.split('/')[-1]
-                tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
+                if baseConfig.viperAddTags == 'yes':
+                    tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
+                else:
+                    tags =""
                 uploadToViper(filePath, fileName, tags)
 
                 if baseConfig.deleteOutput.lower() == "yes":
