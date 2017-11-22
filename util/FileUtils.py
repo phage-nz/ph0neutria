@@ -2,7 +2,7 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from StringUtils import md5SumFile, randomString
-from ViperUtils import getTags, uploadToViper, isNewEntry
+from ViperUtils import getInformations, uploadToViper, isNewEntry
 import os
 import requests
 import sys
@@ -38,11 +38,8 @@ def getWildFile(url, urlMD5):
 
             if isNewEntry(fileHash=fileMD5):
                 fileName = url.split('/')[-1]
-                if baseConfig.viperAddTags == 'yes':
-                    tags = getTags(fileMD5, url, "wild-spider", urlHash=urlMD5)
-                else:
-                    tags =""
-                uploadToViper(filePath, fileName, tags)
+                information = getInformations(url, "wild-spider", urlHash=urlMD5)
+                uploadToViper(filePath, fileName, information)
 
                 if baseConfig.deleteOutput.lower() == "yes":
                     logging.info("Removing file: {0}".format(filePath))

@@ -9,32 +9,53 @@ import os
 import requests
 import sys
 import time
+import hashlib
 
 cDir = os.path.dirname(os.path.realpath(__file__))
 rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
 baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
-def uploadToViper(filePath, fileName, tags):
+def sha256(fname):
+    hash_sha256 = hashlib.sha256()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_sha256.update(chunk)
+    return hash_sha256.hexdigest()
+
+def uploadToViper(filePath, fileName, informations):
     rawFile = open(filePath, 'rb')
 
     try:
         files = {'file': (fileName, rawFile)}
-        tags = {'tags': tags}
+        
         headers = {'User-agent': baseConfig.userAgent}
- 
         logging.info("Adding to Viper: {0}".format(fileName))
-
-        response = requests.post(baseConfig.viperUrlAdd, headers=headers, files=files, data=tags)
-
+        
+        data = {'sha256': sha256(filePath), 'title': 'ph0neutria', 'body': informations}
+        if baseConfig.viperAddTags == 'yes':
+            tags = {'tags': informations}
+        else:
+            tags = ""
+        response = requests.post("%s/file/add"%baseConfig.viperUrl, headers=headers, files=files, data=tags)
         if response.status_code == 200:
             responsejson = json.loads(response.content)
             logging.info("Submitted to Viper, message: {0}".format(responsejson["message"]))
-            return True
-
         else:
             logging.warning("Problem submitting {0} to Viper. Status code: {1}. Continuing.".format(fileName, response.status_code))
             return False
+
+        if baseConfig.viperAddNotes.lower() == "yes":
+            logging.info("Adding notes to Viper: {0}".format(fileName))
+            data = {'sha256': sha256(filePath), 'title': 'ph0neutria', 'body': informations}
+            response = requests.post("%s/file/notes/add"%baseConfig.viperUrl, headers=headers, data=data)            
+            if response.status_code == 200:
+                responsejson = json.loads(response.content)
+                logging.info("Submitted notes to Viper, message: {0}".format(responsejson["message"]))
+            else:
+                logging.warning("Problem creating notes {0} to Viper. Status code: {1}. Continuing.".format(fileName, response.status_code))
+                return False
+        return True
 
     except Exception as e:
         logging.warning("Problem submitting {0} to Viper. Continuing.".format(fileName))
@@ -45,27 +66,24 @@ def uploadToViper(filePath, fileName, tags):
         return False
         #sys.exit(1)
 
-def getTags(fileHash, url, agent, urlHash=None):
-    tags = MutableString()
-
-    tags += fileHash
-    tags += ","
-    tags += urlparse(url).hostname
-    tags += ","
-    tags += url
-    tags += ","
+def getInformations(url, agent, urlHash=None):
+    informations = MutableString()
+    informations += urlparse(url).hostname
+    informations += ","
+    informations += url
+    informations += ","
 
     if not urlHash == None:
-        tags += urlHash
-        tags += ","
+        informations += urlHash
+        informations += ","
 
-    tags += time.strftime(baseConfig.dateFormat)
-    tags += ","
-    tags += agent
+    informations += time.strftime(baseConfig.dateFormat)
+    informations += ","
+    informations += agent
 
-    logging.debug("tags={0}".format(tags))
+    logging.debug("informations={0}".format(informations))
 
-    return str(tags)
+    return str(informations)
 
 def isNewEntry(fileHash=None,urlHash=None):
 
@@ -79,7 +97,7 @@ def isNewEntry(fileHash=None,urlHash=None):
     try:
         userAgent = {'User-agent': baseConfig.userAgent}
 
-        response = requests.post(baseConfig.viperUrlFind, data=params, headers=userAgent)
+        response = requests.post("%s/file/find"%baseConfig.viperUrl, data=params, headers=userAgent)
 
         if not response.status_code == 200:
             if response.status_code == 400:
