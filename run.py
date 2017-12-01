@@ -108,7 +108,6 @@ def startMalShare():
 
 def startVXVault():
     for vUrl in getVXList():
-        print vUrl
         vUrlHash = md5SumString(vUrl)
         if isNewEntry(urlHash=vUrlHash):
             logging.info("Downloading from the wild: {0}".format(vUrl))

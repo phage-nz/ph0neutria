@@ -3,7 +3,7 @@ from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from StringUtils import isValidUrl, md5SumFile, randomString
 from urlparse import urlparse
-from ViperUtils import getTags, uploadToViper, isNewEntry
+from ViperUtils import getInformations, uploadToViper, isNewEntry
 import json
 import os
 import requests
@@ -128,8 +128,8 @@ def getMalShareFile(fileHash):
             if isNewEntry(fileHash=fileMD5):
                 url = getMalShareSource(fileHash)
                 fileName = url.split('/')[-1]
-                tags = getTags(fileMD5, url, "malshare-spider")
-                uploadToViper(filePath, fileName, tags)
+                informations = getInformations(url, "malshare-spider")
+                uploadToViper(filePath, fileName, informations)
 
                 if baseConfig.deleteOutput.lower() == "yes":
                     logging.info("Removing file: {0}".format(filePath))
