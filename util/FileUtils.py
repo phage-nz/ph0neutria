@@ -6,6 +6,7 @@ from ViperUtils import getInformations, uploadToViper, isNewEntry
 import os
 import requests
 import sys
+import magic
 
 cDir = os.path.dirname(os.path.realpath(__file__))
 rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
@@ -36,7 +37,7 @@ def getWildFile(url, urlMD5):
             os.rename(tmpFilePath, filePath)
             logging.info("Renamed as file: {0}. Checking Viper again.".format(filePath))
 
-            if isNewEntry(fileHash=fileMD5):
+            if isNotHTML(filePath) and isNewEntry(fileHash=fileMD5):
                 fileName = url.split('/')[-1]
                 information = getInformations(url, "wild-spider", urlHash=urlMD5)
                 uploadToViper(filePath, fileName, information)
@@ -68,3 +69,9 @@ def getWildFile(url, urlMD5):
         logging.exception(e)
         return False
         #sys.exit(1)
+
+def isNotHTML(filepath):
+    if magic.from_file(filepath, mime=True) != "text/html":
+        return True
+    logging.warning("{0} is a HTML file.".format(filepath))
+    return False
