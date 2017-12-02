@@ -6,7 +6,7 @@ import os
 
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, vtKey, vtUser, viperUrlAdd, viperUrlFind, viperAddTags):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, vtKey, vtUser, viperUrlAdd, viperAddTags):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
@@ -24,7 +24,6 @@ class baseObj:
         self.vtKey = vtKey
         self.vtUser = vtUser
         self.viperUrlAdd = viperUrlAdd
-        self.viperUrlFind = viperUrlFind
         self.viperAddTags = viperAddTags
 
 
@@ -49,7 +48,6 @@ def getBaseConfig(rootDir):
     vtKey = parser.get('VirusTotal', 'apikey')
     vtUser = parser.get('VirusTotal', 'username')
     viperUrlAdd = parser.get('Viper', 'addurl')
-    viperUrlFind = parser.get('Viper', 'findurl')
     viperAddTags = parser.get('Viper', 'addtags')
 
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, vtKey, vtUser, viperUrlAdd, viperUrlFind, viperAddTags)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, vtKey, vtUser, viperUrlAdd, viperAddTags)
