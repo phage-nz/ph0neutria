@@ -4,7 +4,7 @@ v0.9.0
 https://github.com/phage-nz/ph0neutria**
 
 ### About ###
-ph0neutria is a malware zoo builder that sources samples from MalShare and the wild (via the MalShare, Malc0de, Minotaur and VX Vault databases). All fetched samples are stored in Viper for ease of access.  
+ph0neutria is a malware zoo builder that sources samples straight from the wild. Everything is stored in Viper for ease of access and manageability.  
 
 This project was inspired by Ragpicker (https://github.com/robbyFux/Ragpicker, formerly known as "Malware Crawler"). However, ph0neutria aims to:
 - Limit the scope of crawling to only frequently updated and reliable sources.
