@@ -57,6 +57,7 @@ chmod 755 /usr/local/bin/clamav-unofficial-sigs.sh
 mkdir /etc/clamav-unofficial-sigs  
 cp config/* /etc/clamav-unofficial-sigs  
 cd /etc/clamav-unofficial-sigs*  
+
 Rename os.\<yourdistro\>.conf to os.conf, for example:  
 *mv os.ubuntu.conf os.conf*  
 
@@ -72,7 +73,7 @@ clamav-unofficial-sigs.sh --install-logrotate
 clamav-unofficial-sigs.sh --install-man  
 clamav-unofficial-sigs.sh  
 cd /tmp/clamav-unofficial-sigs  
-cp systemd/* /etc/systemd  
+cp systemd/\* /etc/systemd  
 cd ..  
 rm -rf clamav-unofficial-sigs*  
 
