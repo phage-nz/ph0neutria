@@ -1,15 +1,19 @@
 #!/usr/bin/python
 from util.ConfigUtils import getBaseConfig
-from util.FileUtils import getWildFile
+from util.DnsBlUtils import getBLList
+from util.FileUtils import getWildFile, isAcceptedUrl
 from util.LogUtils import getModuleLogger
 from util.Malc0de import getMalc0deList
-from util.MalShare import getMalShareDigest, getMalShareList, getMalShareSource, getMalShareFile
-from util.Minotaur import getMinotaurList
-from util.StringUtils import md5SumString
-from util.ViperUtils import isNewEntry
+from util.MalShare import getMalShareList
+from util.OtxUtils import getOTXList
+from util.PayloadUtils import getPLList
 from util.VxVault import getVXList
+
+
 import multiprocessing
 import os
+import threading
+
 
 #       .__    _______                        __         .__       
 #______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____  
@@ -19,15 +23,18 @@ import os
 #|__|        \/       \/     \/     \/                           \/
 #
 #                  ph0neutria malware crawler
-#                            v0.6.0
+#                            v0.9.0
 #             https://github.com/phage-nz/ph0neutria
+
 
 rootDir = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(rootDir, 'res', 'banner.txt'), 'r') as banner:
         print banner.read()
 
+
 logging = getModuleLogger(__name__)
 baseConfig = getBaseConfig(rootDir)
+
 
 def main(): 
     if not os.path.exists(baseConfig.outputFolder):
@@ -37,19 +44,20 @@ def main():
         logging.info("Spawning multiple ph0neutria processes. Press CTRL+C to terminate.")
         webs = []
         malc0deWeb = multiprocessing.Process(target=startMalc0de)
-        minotaurWeb = multiprocessing.Process(target=startMinotaur)
         vxVaultWeb = multiprocessing.Process(target=startVXVault)
+        osintWeb = multiprocessing.Process(target=startOSINT)
         webs.append(malc0deWeb)
-        webs.append(minotaurWeb)
         webs.append(vxVaultWeb)
+        webs.append(osintWeb)
         malc0deWeb.start()
-        minotaurWeb.start()
         vxVaultWeb.start()
 
         if baseConfig.disableMalShare.lower() == "no":
             malshareWeb = multiprocessing.Process(target=startMalShare)
             webs.append(malshareWeb)
             malshareWeb.start()
+
+        osintWeb.start()
 
         try:
             for web in webs:
@@ -63,56 +71,68 @@ def main():
     else:
         logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
         startMalc0de()
-        startMinotaur()
         startVXVault()
 
         if baseConfig.disableMalShare.lower() == "no":
             startMalShare()
 
+        startOSINT()
+
+
 def startMalc0de():
     for mUrl in getMalc0deList():
-        mUrlHash = md5SumString(mUrl)
-        if isNewEntry(urlHash=mUrlHash):
-            logging.info("Downloading from the wild: {0}".format(mUrl))
-            getWildFile(mUrl, mUrlHash)
+        if isAcceptedUrl(mUrl):
+            getWildFile(mUrl)
 
-def startMinotaur():
-    for mUrl in getMinotaurList():
-        mUrlHash = md5SumString(mUrl)
-        if isNewEntry(urlHash=mUrlHash):
-            logging.info("Downloading from the wild: {0}".format(mUrl))
-            getWildFile(mUrl, mUrlHash)
 
 def startMalShare():
-    if baseConfig.malShareRemoteOnly.lower() == "yes":
-        for mUrl in getMalShareList():
-            mUrlHash = md5SumString(mUrl)
-            if isNewEntry(urlHash=mUrlHash):
-                logging.info("Downloading from the wild: {0}".format(mUrl))
-                getWildFile(mUrl, mUrlHash)
+    for mUrl in getMalShareList():
+        if isAcceptedUrl(mUrl):
+            getWildFile(mUrl)
 
-    else:
-        for mHash in getMalShareDigest():
-            if isNewEntry(fileHash=mHash):
-                if baseConfig.malShareRemoteFirst.lower() == "yes":
-                    mUrl = getMalShareSource(mHash)
-                    mUrlHash = md5SumString(mUrl)
-                    logging.info("Attempting remote download first: {0}".format(mUrl))
-                    if isNewEntry(urlHash=mUrlHash):
-                        if not getWildFile(mUrl, mUrlHash):
-                            logging.info("Remote download failed. Downloading from MalShare: {0}".format(mHash))
-                            getMalShareFile(mHash)
-                else:
-                    logging.info("Downloading from MalShare: {0}".format(mHash))
-                    getMalShareFile(fileHash)
 
 def startVXVault():
     for vUrl in getVXList():
-        print vUrl
-        vUrlHash = md5SumString(vUrl)
-        if isNewEntry(urlHash=vUrlHash):
-            logging.info("Downloading from the wild: {0}".format(vUrl))
-            getWildFile(vUrl, vUrlHash)
+        if isAcceptedUrl(vUrl):
+            getWildFile(vUrl)
+
+
+def startOSINT():
+    url_list = []
+
+    pl_list = getPLList()
+
+    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+        pl_thread = threading.Thread(target=fetchOSINT, args=[pl_list])
+        pl_thread.start()
+
+    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == "no":
+        fetchOSINT(pl_list)
+
+    otx_list = getOTXList()
+
+    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+        otx_thread = threading.Thread(target=fetchOSINT, args=[otx_list])
+        otx_thread.start()
+
+    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == "no":
+        fetchOSINT(otx_list)
+
+    bl_list = getBLList()
+
+    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+        bl_thread = threading.Thread(target=fetchOSINT, args=[bl_list])
+        bl_thread.start()
+
+    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == "no":
+        fetchOSINT(bl_list)
+
+
+def fetchOSINT(url_list):
+    for oUrl in url_list:
+        if isAcceptedUrl(oUrl):
+            getWildFile(oUrl)
+
 
 if __name__ == "__main__":
     main()
