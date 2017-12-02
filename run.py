@@ -40,19 +40,22 @@ def main():
     if not os.path.exists(baseConfig.outputFolder):
         os.makedirs(baseConfig.outputFolder)
 
-    if baseConfig.multiProcess.lower() == "yes":
-        logging.info("Spawning multiple ph0neutria processes. Press CTRL+C to terminate.")
+    if baseConfig.multiProcess.lower() == 'yes':
+        logging.info('Spawning multiple ph0neutria spiders. Press CTRL+C to terminate.')
         webs = []
+
         malc0deWeb = multiprocessing.Process(target=startMalc0de)
         vxVaultWeb = multiprocessing.Process(target=startVXVault)
         osintWeb = multiprocessing.Process(target=startOSINT)
+
         webs.append(malc0deWeb)
         webs.append(vxVaultWeb)
         webs.append(osintWeb)
+
         malc0deWeb.start()
         vxVaultWeb.start()
 
-        if baseConfig.disableMalShare.lower() == "no":
+        if baseConfig.disableMalShare.lower() == 'no':
             malshareWeb = multiprocessing.Process(target=startMalShare)
             webs.append(malshareWeb)
             malshareWeb.start()
@@ -63,17 +66,17 @@ def main():
             for web in webs:
                 web.join()
         except KeyboardInterrupt:
-            logging.info("Mother spider received Ctrl+C. Killing babies.")
+            logging.info('Mother spider received Ctrl+C. Killing babies.')
             for web in webs:
                 web.terminate()
                 web.join()
                 
     else:
-        logging.info("Spawning single ph0neutria process. Press CTRL+C to terminate.")
+        logging.info('Spawning single ph0neutria spider. Press CTRL+C to terminate.')
         startMalc0de()
         startVXVault()
 
-        if baseConfig.disableMalShare.lower() == "no":
+        if baseConfig.disableMalShare.lower() == 'no':
             startMalShare()
 
         startOSINT()
@@ -98,41 +101,44 @@ def startVXVault():
 
 
 def startOSINT():
-    url_list = []
-
     pl_list = getPLList()
 
-    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
         pl_thread = threading.Thread(target=fetchOSINT, args=[pl_list])
         pl_thread.start()
+        pl_thread.join()
 
-    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == "no":
+    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(pl_list)
 
     otx_list = getOTXList()
 
-    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
         otx_thread = threading.Thread(target=fetchOSINT, args=[otx_list])
         otx_thread.start()
+        otx_thread.join()
 
-    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == "no":
+    if len(otx_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(otx_list)
 
     bl_list = getBLList()
 
-    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == "yes":
+    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
         bl_thread = threading.Thread(target=fetchOSINT, args=[bl_list])
         bl_thread.start()
+        bl_thread.join()
 
-    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == "no":
+    if len(bl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(bl_list)
 
 
 def fetchOSINT(url_list):
+    logging.info('Spawned new OSINT spider.')
+
     for oUrl in url_list:
         if isAcceptedUrl(oUrl):
             getWildFile(oUrl)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
