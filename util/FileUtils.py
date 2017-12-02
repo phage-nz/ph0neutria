@@ -172,7 +172,7 @@ def processDownload(tmpFilePath, fileName, fileUrl):
         cleanUp(filePath)
         return False
 
-    logging.info('File with hash: {0} identified as type: '{1}''.format(fileHash, mimeType))
+    logging.info('File with hash: {0} identified as type: {1}'.format(fileHash, mimeType))
 
     fileExt = os.path.splitext(fileName)[1]
 
