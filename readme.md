@@ -117,17 +117,19 @@ To run this daily, create a script in /etc/cron.daily with the following:
 cd /opt/ph0neutria && sudo -H -u spider python run.py*
 
 
-### VirusTotal Notes ###
-The OSINT crawler was designed with the assumption you have a request limit of 10 per minute. If you do not, extend the duration of sleeps after making VirusTotal API calls.
+### Tags and Notes ###
+Tags:  
+**{1},{2},{3}**  
 
-
-### Tags ###
-**{1},{2},{3},{4}**  
-
-- File MD5.
-- Source domain (see Known Issues).
-- Source URL (see Known Issues).
 - Date stamp.
+- Source domain (see Known Issues).
+- 'ph0neutria' identifier (tag).
+
+Notes:  
+**{1)({2})**
+
+- 'ph0neutria' identifier (title).
+- Source URL.  
 
 The original name of the file forms the identifying name within Viper.
 

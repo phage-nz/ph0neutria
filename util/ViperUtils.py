@@ -2,7 +2,7 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from StringUtils import md5SumString
+from StringUtils import md5SumString, sha256SumFile
 from urlparse import urlparse
 from UserString import MutableString
 
@@ -20,11 +20,17 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
-def uploadToViper(filePath, fileName, tags):
+def uploadToViper(filePath, fileName, fileUrl):
     rawFile = open(filePath, 'rb')
 
     try:
         files = {'file': (fileName, rawFile)}
+
+        if baseConfig.viperAddTags == 'yes':
+            tags = getTags(fileUrl)
+        else:
+            tags =''
+
         tags = {'tags': tags}
         headers = {'User-agent': baseConfig.userAgent}
  
@@ -34,11 +40,25 @@ def uploadToViper(filePath, fileName, tags):
 
         if response.status_code == 200:
             responsejson = json.loads(response.content)
-            logging.info('Submitted to Viper, message: {0}'.format(responsejson['message']))
+            logging.info('Submitted file to Viper, message: {0}'.format(responsejson['message']))
+
+            if baseConfig.viperAddNotes == 'yes':
+                noteData = {'sha256': sha256SumFile(filePath), 'title': 'ph0neutria', 'body': getNotes(fileUrl)}
+
+                response = requests.post(baseConfig.viperUrlNotes, headers=headers, data=noteData)
+
+                if response.status_code == 200:
+                    responsejson = json.loads(response.content)
+                    logging.info('Submitted note to Viper, message: {0}'.format(responsejson['message']))
+
+                else:
+                    logging.warning('Problem submitting note {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
+                    return False
+
             return True
 
         else:
-            logging.warning('Problem submitting {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
+            logging.warning('Problem submitting file {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
 
     except requests.exceptions.ConnectionError as e:
         logging.warning('Problem connecting to Viper. Error: {0}'.format(e))
@@ -54,17 +74,24 @@ def uploadToViper(filePath, fileName, tags):
 
 
 
-def getTags(fileHash, url):
+def getTags(fileUrl):
     tags = MutableString()
 
-    tags += fileHash
-    tags += ','
-    tags += urlparse(url).hostname
-    tags += ','
-    tags += url
-    tags += ','
     tags += time.strftime(baseConfig.dateFormat)
+    tags += ','
+    tags += urlparse(fileUrl).hostname
+    tags += ','
+    tags += 'ph0neutria'
 
     logging.debug('tags={0}'.format(tags))
 
     return str(tags)
+
+def getNotes(fileUrl):
+    note = MutableString()
+
+    note += fileUrl
+
+    logging.debug('note={0}'.format(note))
+
+    return str(note)

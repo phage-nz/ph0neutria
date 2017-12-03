@@ -2,7 +2,7 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from StringUtils import md5SumFile, randomString, getHostFromUrl
-from ViperUtils import getTags, uploadToViper
+from ViperUtils import uploadToViper
 
 
 import codecs
@@ -178,13 +178,8 @@ def processDownload(tmpFilePath, fileName, fileUrl):
 
     if fileExt == '':
         fileExt = '.bin'
-
-    if baseConfig.viperAddTags == 'yes':
-        tags = getTags(fileHash, fileUrl)
-    else:
-        tags =''
     
-    uploaded = uploadToViper(filePath, fileName, tags)
+    uploaded = uploadToViper(filePath, fileName, fileUrl)
 
     addToHashCache(fileHash)
     cleanUp(filePath)

@@ -67,14 +67,21 @@ def isValidUrl(url):
 def md5SumFile(fileName):
     with open(fileName) as fileToHash:
         data = fileToHash.read()
-        md5Sum = hashlib.md5(data).hexdigest()
-    return md5Sum
+        fileSum = hashlib.md5(data).hexdigest()
+    return fileSum
 
 
 def md5SumString(inString):
     hasher = hashlib.md5()
     hasher.update(inString)
     return hasher.hexdigest()
+
+
+def sha256SumFile(fileName):
+    with open(fileName) as fileToHash:
+        data = fileToHash.read()
+        fileSum = hashlib.sha256(data).hexdigest()
+    return fileSum
 
 
 def randomString(length):
