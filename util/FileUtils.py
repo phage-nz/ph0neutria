@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
-from StringUtils import md5SumFile, randomString, getHostFromUrl
+from StringUtils import sha256SumFile, randomString
 from ViperUtils import uploadToViper
 
 
@@ -153,9 +153,7 @@ def processDownload(tmpFilePath, fileName, fileUrl):
         cleanUp(tmpFilePath)
         return False
 
-    fileHash = md5SumFile(tmpFilePath)
-
-    hostname = getHostFromUrl(fileUrl)
+    fileHash = sha256SumFile(tmpFilePath)
 
     if not isAcceptedHash(fileHash):
         cleanUp(tmpFilePath)
@@ -174,7 +172,7 @@ def processDownload(tmpFilePath, fileName, fileUrl):
 
     logging.info('File with hash: {0} identified as type: {1}'.format(fileHash, mimeType))
 
-    uploaded = uploadToViper(filePath, fileName, fileUrl)
+    uploaded = uploadToViper(filePath, fileName, fileHash, fileUrl)
 
     addToHashCache(fileHash)
     cleanUp(filePath)

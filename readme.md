@@ -28,8 +28,11 @@ OSINT. If required, passive DNS is used to produce a list of recent IP's for a d
 - ThreatExpert.
 
 ### Screenshots ###
-![CLI](http://iforce.co.nz/i/yoxgsguf.cof.png "CLI")
-![Web](http://iforce.co.nz/i/dws1yb4z.zx4.png "Web")
+![CLI](res/img/cli_1.png "Initial Spawning of Spiders")
+![CLI](res/img/cli_1.png "General Operation")
+![Web](res/img/viper_1.png "Main Sample Listing")
+![Web](res/img/viper_2.png "Sample Overview")
+![Web](res/img/viper_3.png "Sample Notes")
 
 
 ### Version Notes ###

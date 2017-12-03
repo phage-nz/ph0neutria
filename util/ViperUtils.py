@@ -2,7 +2,6 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from requests_toolbelt.multipart.encoder import MultipartEncoder
-from StringUtils import md5SumString, sha256SumFile
 from urlparse import urlparse
 from UserString import MutableString
 
@@ -20,7 +19,7 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
-def uploadToViper(filePath, fileName, fileUrl):
+def uploadToViper(filePath, fileName, fileHash, fileUrl):
     rawFile = open(filePath, 'rb')
 
     try:
@@ -43,7 +42,7 @@ def uploadToViper(filePath, fileName, fileUrl):
             logging.info('Submitted file to Viper, message: {0}'.format(responsejson['message']))
 
             if baseConfig.viperAddNotes == 'yes':
-                noteData = {'sha256': sha256SumFile(filePath), 'title': 'ph0neutria', 'body': getNotes(fileUrl)}
+                noteData = {'sha256': fileHash, 'title': 'ph0neutria', 'body': getNotes(fileUrl)}
 
                 response = requests.post(baseConfig.viperUrlNotes, headers=headers, data=noteData)
 

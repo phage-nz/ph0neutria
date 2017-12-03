@@ -64,18 +64,6 @@ def isValidIP(inString):
 def isValidUrl(url):
     return validators.url(url)
 
-def md5SumFile(fileName):
-    with open(fileName) as fileToHash:
-        data = fileToHash.read()
-        fileSum = hashlib.md5(data).hexdigest()
-    return fileSum
-
-
-def md5SumString(inString):
-    hasher = hashlib.md5()
-    hasher.update(inString)
-    return hasher.hexdigest()
-
 
 def sha256SumFile(fileName):
     with open(fileName) as fileToHash:
