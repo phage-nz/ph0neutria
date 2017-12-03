@@ -174,11 +174,6 @@ def processDownload(tmpFilePath, fileName, fileUrl):
 
     logging.info('File with hash: {0} identified as type: {1}'.format(fileHash, mimeType))
 
-    fileExt = os.path.splitext(fileName)[1]
-
-    if fileExt == '':
-        fileExt = '.bin'
-    
     uploaded = uploadToViper(filePath, fileName, fileUrl)
 
     addToHashCache(fileHash)
