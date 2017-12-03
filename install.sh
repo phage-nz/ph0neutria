@@ -14,9 +14,9 @@ echo 'deb-src http://deb.torproject.org/torproject.org xenial main' >> /etc/apt/
 gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 apt update && apt upgrade
-apt-get -f install autoconf build-essential clamav clamav-daemon clamav-freshclam gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libtool python-dev python-lxml python-pip swig tor deb.torproject.org-keyring -y
+apt-get -f install autoconf bison build-essential clamav clamav-daemon clamav-freshclam flex gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libpcre3-dev libtool pcre python-dev python-lxml python-pip swig tor deb.torproject.org-keyring -y
 pip install --upgrade pip
-pip install coloredlogs numpy OTXv2 pandas pefile pyclamd PySocks python-Levenshtein python-magic requests requests_toolbelt scipy sklearn validators
+pip install BeautifulSoup coloredlogs numpy OTXv2 pandas pefile pyclamd PySocks python-Levenshtein python-magic requests requests_toolbelt scipy sklearn validators
 cd /tmp
 wget https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/ssdeep-2.14.1.tar.gz
 tar -zxvf ssdeep-2.14.1.tar.gz
