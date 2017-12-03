@@ -29,7 +29,7 @@ OSINT. If required, passive DNS is used to produce a list of recent IP's for a d
 
 ### Screenshots ###
 ![CLI](res/img/cli_1.png "Initial Spawning of Spiders")
-![CLI](res/img/cli_1.png "General Operation")
+![CLI](res/img/cli_2.png "General Operation")
 ![Web](res/img/viper_1.png "Main Sample Listing")
 ![Web](res/img/viper_2.png "Sample Overview")
 ![Web](res/img/viper_3.png "Sample Notes")
