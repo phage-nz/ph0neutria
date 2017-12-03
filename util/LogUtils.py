@@ -2,6 +2,7 @@
 import coloredlogs
 import logging
 
+
 def getModuleLogger(moduleName):
     logger = logging.getLogger(moduleName)
     logger.setLevel(logging.INFO)
