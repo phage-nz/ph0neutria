@@ -61,7 +61,8 @@ def main():
             webs.append(malshareWeb)
             malshareWeb.start()
 
-        osintWeb.start()
+        if baseConfig.disableOsint.lower() == 'no':
+            osintWeb.start()
 
         try:
             for web in webs:
@@ -80,7 +81,8 @@ def main():
         if baseConfig.disableMalShare.lower() == 'no':
             startMalShare()
 
-        startOSINT()
+        if baseConfig.disableOsint.lower() == 'no':
+            startOSINT()
 
 
 def startMalc0de():

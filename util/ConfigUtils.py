@@ -6,7 +6,7 @@ import os
 
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
@@ -20,6 +20,7 @@ class baseObj:
         self.osintDays = osintDays
         self.malShareApiKey = malShareApiKey
         self.disableMalShare = disableMalShare
+        self.disableOsint = disableOsint
         self.otxKey = otxKey
         self.shodanKey = shodanKey
         self.vtKey = vtKey
@@ -47,6 +48,7 @@ def getBaseConfig(rootDir):
     osintDays = parser.get('Core', 'osintdays')
     malShareApiKey = parser.get('MalShare', 'apikey')
     disableMalShare = parser.get('MalShare', 'disable')
+    disableOsint = parser.get('OSINT', 'disable')
     otxKey = parser.get('OTX', 'apikey')
     shodanKey = parser.get('Shodan', 'apikey')
     vtKey = parser.get('VirusTotal', 'apikey')
@@ -56,4 +58,4 @@ def getBaseConfig(rootDir):
     viperAddTags = parser.get('Viper', 'addtags')
     viperAddNotes = parser.get('Viper', 'addnotes')
 
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes)
