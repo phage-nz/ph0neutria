@@ -4,7 +4,6 @@ from ConfigUtils import getBaseConfig
 from datetime import datetime
 from LogUtils import getModuleLogger
 from MachineUtils import getSignificantItems
-from StringUtils import isValidUrl
 from VirusTotal import getUrlsForIp
 
 
@@ -23,7 +22,7 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
-def getPLList():
+def queryPayload():
     try:
         keyword_list = ['beacon','c2 commands','checkin','configuration request','downloader','file download','gate.php','exe download','executable download','dl exe','exe dl']
 
@@ -50,24 +49,7 @@ def getPLList():
                                     if not src_ip in ip_list:
                                         ip_list.append(src_ip)
 
-            if len(ip_list) > 0:
-                url_list = []
-
-                for ip_addr in ip_list:
-                    urls = getUrlsForIp(ip_addr)
-
-                    if len(urls) > 0:
-                        url_list.extend(urls)
-
-                if len(url_list) > 0:
-                    url_list = getSignificantItems(url_list)
-                    return url_list
-
-                else:
-                    logging.warning('Failed to retrieve any URLs from VirusTotal.')
-
-            else:
-                logging.info('Failed to retrieve any IP addresses from alerts.')
+            return ip_list
 
         else:
             logging.critical('Failed to retrieve Payload Security feed.')
@@ -81,5 +63,29 @@ def getPLList():
         logging.exception(type(e))
         logging.exception(e.args)
         logging.exception(e)
+
+    return []
+
+
+def getPLList():
+    url_list = []
+    ip_list = queryPayload()
+    
+    if len(ip_list) > 0:
+        for ip_addr in ip_list:
+            urls = getUrlsForIp(ip_addr)
+        
+            if len(urls) > 0:
+                url_list.extend(urls)
+
+        if len(url_list) > 0:
+            url_list = getSignificantItems(url_list)
+            return url_list
+
+        else:
+            logging.warning('Failed to retrieve any URLs from VirusTotal.')
+
+    else:
+        logging.warning('Failed to retrieve any IP addresses from alerts.')
 
     return []

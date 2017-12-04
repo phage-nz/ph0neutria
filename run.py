@@ -7,6 +7,7 @@ from util.Malc0de import getMalc0deList
 from util.MalShare import getMalShareList
 from util.OtxUtils import getOTXList
 from util.PayloadUtils import getPLList
+from util.ShodanUtils import getShodanList
 from util.VxVault import getVXList
 
 
@@ -120,6 +121,16 @@ def startOSINT():
 
     if len(otx_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(otx_list)
+        
+    shodan_list = getShodanList()
+
+    if len(shodan_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
+        shodan_thread = threading.Thread(target=fetchOSINT, args=[shodan_list])
+        shodan_thread.start()
+        shodan_thread.join()
+
+    if len(shodan_list) > 0 and baseConfig.multiProcess.lower() == 'no':
+        fetchOSINT(shodan_list)
 
     bl_list = getBLList()
 

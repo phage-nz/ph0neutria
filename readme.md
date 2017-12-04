@@ -25,6 +25,7 @@ OSINT. If required, passive DNS is used to produce a list of recent IP's for a d
 - AlienVault OTX.
 - DNS-BH.
 - Payload Security (Hybrid Analysis).
+- Shodan.
 - ThreatExpert.
 
 ### Screenshots ###
