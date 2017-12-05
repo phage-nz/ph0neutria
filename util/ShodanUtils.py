@@ -30,7 +30,7 @@ def queryShodan():
         logging.info('Querying Shodan...')
 
         days_back = int(baseConfig.osintDays) + 1
-        limit_date = (datetime.date.today() - datetime.timedelta(days=days_back))).strftime('%d/%m/%Y')
+        limit_date = (datetime.date.today() - datetime.timedelta(days=days_back)).strftime('%d/%m/%Y')
         search_term = 'category:malware after:{0}'.format(limit_date)
 
         results = api.search(search_term, page=1)
