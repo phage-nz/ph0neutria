@@ -16,7 +16,7 @@ gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 apt update && apt upgrade
 apt-get -f install autoconf bison build-essential clamav clamav-daemon clamav-freshclam flex gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libpcre3-dev libtool pcre python-dev python-lxml python-pip swig tor deb.torproject.org-keyring -y
 pip install --upgrade pip
-pip install BeautifulSoup coloredlogs numpy OTXv2 pandas pefile pyclamd PySocks python-Levenshtein python-magic requests requests_toolbelt scipy sklearn validators
+pip install BeautifulSoup coloredlogs numpy OTXv2 pandas pefile pyclamd PySocks python-Levenshtein python-magic requests requests_toolbelt scipy shodan sklearn validators
 cd /tmp
 wget https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/ssdeep-2.14.1.tar.gz
 tar -zxvf ssdeep-2.14.1.tar.gz
