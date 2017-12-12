@@ -20,6 +20,10 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
+reqLimit = int(baseConfig.vtReqPerMin)
+vtWait = int(float(60)/reqLimit)
+
+
 def getUrlsForIp(ip_addr):
     params = {'apikey': baseConfig.vtKey, 'ip': ip_addr}
     headers = {'Accept-Encoding': 'gzip, deflate', 'User-Agent': baseConfig.vtUser}
@@ -28,7 +32,7 @@ def getUrlsForIp(ip_addr):
     response = requests.get('https://www.virustotal.com/vtapi/v2/ip-address/report', params=params, headers=headers)
 
     logging.info('Waiting for a moment...')
-    time.sleep(7)
+    time.sleep(vtWait)
 
     if response.status_code == 200:
         vt_report = json.loads(response.text)
@@ -68,7 +72,7 @@ def getUrlsForDomain(domain):
     response = requests.get('https://www.virustotal.com/vtapi/v2/domain/report', params=params, headers=headers)
 
     logging.info('Waiting for a moment...')
-    time.sleep(7)
+    time.sleep(vtWait)
 
     if response.status_code == 200:
         vt_report = json.loads(response.text)

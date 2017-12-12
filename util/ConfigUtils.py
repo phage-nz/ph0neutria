@@ -6,7 +6,7 @@ import os
 
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
@@ -25,6 +25,7 @@ class baseObj:
         self.shodanKey = shodanKey
         self.vtKey = vtKey
         self.vtUser = vtUser
+        self.vtReqPerMin = vtReqPerMin
         self.viperUrlAdd = viperUrlAdd
         self.viperUrlNotes = viperUrlNotes
         self.viperAddTags = viperAddTags
@@ -53,9 +54,10 @@ def getBaseConfig(rootDir):
     shodanKey = parser.get('Shodan', 'apikey')
     vtKey = parser.get('VirusTotal', 'apikey')
     vtUser = parser.get('VirusTotal', 'username')
+    vtReqPerMin = parser.get('VirusTotal', 'requestsperminute')
     viperUrlAdd = parser.get('Viper', 'addurl')
     viperUrlNotes = parser.get('Viper', 'notesurl')
     viperAddTags = parser.get('Viper', 'addtags')
     viperAddNotes = parser.get('Viper', 'addnotes')
 
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, viperUrlAdd, viperUrlNotes, viperAddTags, viperAddNotes)
