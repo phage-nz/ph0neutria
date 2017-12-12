@@ -24,13 +24,13 @@ def getVXList():
         request = requests.get('http://vxvault.net/URL_List.php', headers=userAgent)
 
         if request.status_code == 200:
-            malList = []
+            mal_list = []
 
             for line in request.content.split('\n'):
                 url = line.strip()
                 if isValidUrl(url):
-                    malList.append(url)
-            return malList
+                    mal_list.append(url)
+            return mal_list
                 
         else:
             logging.error('Problem connecting to VX Vault. Status code:{0}. Please try again later.'.format(request.status_code))

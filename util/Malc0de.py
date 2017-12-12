@@ -17,7 +17,7 @@ logging = getModuleLogger(__name__)
 
 def getMalc0deList():
     try:
-        rawList = []
+        raw_list = []
 
         logging.info('Fetching latest Malc0de list.')
 
@@ -25,12 +25,12 @@ def getMalc0deList():
 
         if xml:
             for row in xml('description'):
-                rawList.append(row)
-            del rawList[0]
+                raw_list.append(row)
+            del raw_list[0]
 
             malList = []
 
-            for row in rawList:
+            for row in raw_list:
                 location = re.sub('&amp;','&',str(row).split()[1]).replace(',','')
                 if location.strip():
                     url = 'http://{0}'.format(location)

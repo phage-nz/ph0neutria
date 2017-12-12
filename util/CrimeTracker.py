@@ -19,7 +19,7 @@ logging = getModuleLogger(__name__)
 
 def queryCrimeTracker():
     try:
-        ipList = []
+        ip_list = []
 
         logging.info('Fetching latest CyberCrime Tracker list.')
 
@@ -29,7 +29,8 @@ def queryCrimeTracker():
             for row in xml('description'):
                 ip_addr = re.findall(r'([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})', str(row.text))
                 if len(ip_addr) > 0:
-                    ipList.append(ip_addr[0])
+                    if ip_addr not in ip_list:
+                        ip_list.append(ip_addr[0])
 
         else:
             logging.error('Empty CyberCrime Tracker XML. Potential connection error. Please try again later.')
@@ -41,7 +42,7 @@ def queryCrimeTracker():
         logging.exception(e.args)
         logging.exception(e)
 
-    return ipList
+    return ip_list
 
 def getCrimeList():
     ip_list = queryCrimeTracker()
