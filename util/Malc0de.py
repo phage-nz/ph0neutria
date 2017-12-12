@@ -17,7 +17,7 @@ logging = getModuleLogger(__name__)
 
 def getMalc0deList():
     try:
-        rawList = []
+        raw_list = []
 
         logging.info('Fetching latest Malc0de list.')
 
@@ -25,12 +25,12 @@ def getMalc0deList():
 
         if xml:
             for row in xml('description'):
-                rawList.append(row)
-            del rawList[0]
+                raw_list.append(row)
+            del raw_list[0]
 
             malList = []
 
-            for row in rawList:
+            for row in raw_list:
                 location = re.sub('&amp;','&',str(row).split()[1]).replace(',','')
                 if location.strip():
                     url = 'http://{0}'.format(location)
@@ -41,9 +41,6 @@ def getMalc0deList():
 
         else:
             logging.error('Empty Malc0de XML. Potential connection error. Please try again later.')
-
-    except requests.exceptions.ConnectionError as e:
-        logging.warning('Problem connecting to Malc0de. Error: {0}'.format(e))
 
     except Exception as e:
         logging.warning('Problem connecting to Malc0de. Aborting task.')

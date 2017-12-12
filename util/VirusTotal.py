@@ -31,14 +31,14 @@ def getUrlsForIp(ip_addr):
     time.sleep(7)
 
     if response.status_code == 200:
-        vtReport = json.loads(response.text)
-        if vtReport['response_code'] == 0:
+        vt_report = json.loads(response.text)
+        if vt_report['response_code'] == 0:
             logging.info('Address not found.')
 
-        if vtReport['response_code'] == 1:
-            if 'detected_urls' in vtReport:
+        if vt_report['response_code'] == 1:
+            if 'detected_urls' in vt_report:
                 urls = []
-                for url in vtReport['detected_urls']:
+                for url in vt_report['detected_urls']:
                     days_back = int(baseConfig.osintDays) + 1
                     scan_date = datetime.strptime(url['scan_date'], '%Y-%m-%d %H:%M:%S')
 
@@ -71,13 +71,13 @@ def getUrlsForDomain(domain):
     time.sleep(7)
 
     if response.status_code == 200:
-        vtReport = json.loads(response.text)
-        if vtReport['response_code'] == 0:
+        vt_report = json.loads(response.text)
+        if vt_report['response_code'] == 0:
             logging.info('Domain not found.')
 
-        if vtReport['response_code'] == 1:
-            if 'resolutions' in vtReport:
-                resolutions = vtReport['resolutions']
+        if vt_report['response_code'] == 1:
+            if 'resolutions' in vt_report:
+                resolutions = vt_report['resolutions']
 
                 if len(resolutions) > 0:
                     ip_list = []

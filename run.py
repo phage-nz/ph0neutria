@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from util.ConfigUtils import getBaseConfig
+from util.CrimeTracker import getCrimeList
 from util.DnsBlUtils import getBLList
 from util.FileUtils import getWildFile, isAcceptedUrl
 from util.LogUtils import getModuleLogger
@@ -113,6 +114,19 @@ def startOSINT():
 
     if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(pl_list)
+        
+    if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
+        fetchOSINT(pl_list)
+        
+    crime_list = getCrimeList()
+
+    if len(crime_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
+        crime_thread = threading.Thread(target=fetchOSINT, args=[crime_list])
+        crime_thread.start()
+        crime_thread.join()
+
+    if len(crime_list) > 0 and baseConfig.multiProcess.lower() == 'no':
+        fetchOSINT(crime_list)
 
     otx_list = getOTXList()
 

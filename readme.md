@@ -23,6 +23,7 @@ URL feeds:
 
 OSINT. If required, passive DNS is used to produce a list of recent IP's for a domain, and VirusTotal queried for recent URL's pertaining to the IP. Only one source may be queried at any one time so not to exceed VirusTotal API request limits. The resulting URL lists from each source are filtered by levenshtein distance to reduce the number of similar items, and are processed in their own thread.
 - AlienVault OTX.
+- CyberCrime Tracker.
 - DNS-BH.
 - Payload Security (Hybrid Analysis).
 - Shodan.
