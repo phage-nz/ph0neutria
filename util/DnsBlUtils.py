@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from LogUtils import getModuleLogger
 from MachineUtils import getSignificantItems
 from VirusTotal import getUrlsForDomain
+
+
 import os
 import requests
 import string

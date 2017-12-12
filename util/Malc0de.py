@@ -42,9 +42,6 @@ def getMalc0deList():
         else:
             logging.error('Empty Malc0de XML. Potential connection error. Please try again later.')
 
-    except requests.exceptions.ConnectionError as e:
-        logging.warning('Problem connecting to Malc0de. Error: {0}'.format(e))
-
     except Exception as e:
         logging.warning('Problem connecting to Malc0de. Aborting task.')
         logging.exception(sys.exc_info())
