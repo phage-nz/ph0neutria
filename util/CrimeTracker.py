@@ -2,7 +2,7 @@
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from MachineUtils import getSignificantItems
-from StringUtils import isValidUrl, soupParse
+from StringUtils import soupParse
 from VirusTotal import getUrlsForIp
 
 
