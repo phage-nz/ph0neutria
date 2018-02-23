@@ -15,7 +15,7 @@ gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 apt update && apt upgrade
 apt-get -f install autoconf bison build-essential clamav clamav-daemon clamav-freshclam flex gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libpcre3 libpcre3-dev libtool python-dev python-lxml python-pip swig tor deb.torproject.org-keyring -y
-pip install --upgrade pip
+pip install --upgrade pip setuptools
 pip install BeautifulSoup coloredlogs numpy OTXv2 pandas pefile pyclamd PySocks python-Levenshtein python-magic requests requests_toolbelt scipy shodan sklearn validators
 cd /tmp
 wget https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/ssdeep-2.14.1.tar.gz
@@ -45,7 +45,9 @@ rm -rf yara
 cd /opt
 git clone https://github.com/viper-framework/viper
 cd viper
-pip install -r requirements.txt
+pip install -r requirements-base.txt
+pip install -r requirements-modules.txt
+pip install -r requirements-web.txt
 # Workaround for requests SSL errors (https://github.com/requests/requests/issues/3006):
 pip install --force-reinstall requests[security]
 cd viper/modules

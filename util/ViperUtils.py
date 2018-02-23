@@ -19,67 +19,47 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
-def uploadToViper(filePath, fileName, fileHash, fileUrl):
-    rawFile = open(filePath, 'rb')
-
+def uploadToViper(filePath, fileName, fileUrl):
     try:
-        files = {'file': (fileName, rawFile)}
+        sample_data = {'tag_list': getTags(fileUrl), 'note_title': 'Sample Source', 'note_body': getNotes(fileUrl), 'file_name': fileName}
+        auth_header = {'Authorization': baseConfig.viperApiToken}
 
-        if baseConfig.viperAddTags == 'yes':
-            tags = getTags(fileUrl)
-        else:
-            tags =''
+        print('Adding to Viper: {0}'.format(fileName))
 
-        tags = {'tags': tags}
-        headers = {'User-agent': baseConfig.userAgent}
- 
-        logging.info('Adding to Viper: {0}'.format(fileName))
+        with open(filePath, 'rb') as rawFile:
+            response = requests.post(baseConfig.viperUrlAdd, headers=auth_header, files={'file': rawFile}, data=sample_data)
 
-        response = requests.post(baseConfig.viperUrlAdd, headers=headers, files=files, data=tags)
+            if response.status_code == 201:
+                responsejson = json.loads(response.content)
+                logging.info('Submitted file to Viper. Sample URL: {0}'.format(responsejson[0]['url']))
+                return True
 
-        if response.status_code == 200:
-            responsejson = json.loads(response.content)
-            logging.info('Submitted file to Viper, message: {0}'.format(responsejson['message']))
+            elif response.status_code == 400:
+                logging.info('File already exists in Viper.')
 
-            if baseConfig.viperAddNotes == 'yes':
-                noteData = {'sha256': fileHash, 'title': 'ph0neutria', 'body': getNotes(fileUrl)}
-
-                response = requests.post(baseConfig.viperUrlNotes, headers=headers, data=noteData)
-
-                if response.status_code == 200:
-                    responsejson = json.loads(response.content)
-                    logging.info('Submitted note to Viper, message: {0}'.format(responsejson['message']))
-
-                else:
-                    logging.warning('Problem submitting note {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
-                    return False
-
-            return True
-
-        else:
-            logging.warning('Problem submitting file {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
+            else:
+                print('Problem submitting file {0} to Viper. Status code: {1}. Continuing.'.format(fileName, response.status_code))
 
     except requests.exceptions.ConnectionError as e:
-        logging.warning('Problem connecting to Viper. Error: {0}'.format(e))
+        print('Problem connecting to Viper. Error: {0}'.format(e))
 
     except Exception as e:
-        logging.warning('Problem connecting to Viper. Aborting task.')
-        logging.exception(sys.exc_info())
-        logging.exception(type(e))
-        logging.exception(e.args)
-        logging.exception(e)
+        print('Problem connecting to Viper. Aborting task.')
+        print(sys.exc_info())
+        print(type(e))
+        print(e.args)
+        print(e)
 
     return False
-
 
 
 def getTags(fileUrl):
     tags = MutableString()
 
     tags += time.strftime(baseConfig.dateFormat)
-    tags += ','
+    tags += ' '
     tags += urlparse(fileUrl).hostname
-    tags += ','
+    tags += ' '
     tags += 'ph0neutria'
 
     logging.debug('tags={0}'.format(tags))

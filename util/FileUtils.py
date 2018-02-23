@@ -118,7 +118,7 @@ def requestUrl(fileUrl):
 
             tmpName = randomString(32)
             tmpFilePath = os.path.join(baseConfig.outputFolder, tmpName)
-            fileName = urlparse.urlparse(fileUrl).path
+            fileName = urlparse.urlparse(fileUrl).path.strip('/')
 
             open(tmpFilePath,'wb').write(response)
 
@@ -172,7 +172,7 @@ def processDownload(tmpFilePath, fileName, fileUrl):
 
     logging.info('File with hash: {0} identified as type: {1}'.format(fileHash, mimeType))
 
-    uploaded = uploadToViper(filePath, fileName, fileHash, fileUrl)
+    uploaded = uploadToViper(filePath, fileName, fileUrl)
 
     addToHashCache(fileHash)
     cleanUp(filePath)
@@ -231,6 +231,6 @@ def isAcceptedUrl(fileUrl):
 
 
 def cleanUp(filePath):
-    if baseConfig.deleteOutput.lower() == 'yes':
+    if baseConfig.deleteOutput.lower() == 'yes' and os.path.exists(filePath):
         logging.info('Removing file: {0}'.format(filePath))
         os.remove(filePath)

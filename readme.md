@@ -1,6 +1,6 @@
 # ph0neutria #
 **ph0neutria malware crawler  
-v0.9.0  
+v0.9.1  
 https://github.com/phage-nz/ph0neutria**
 
 ### About ###
@@ -38,8 +38,9 @@ OSINT. If required, passive DNS is used to produce a list of recent IP's for a d
 
 
 ### Version Notes ###
-- **0.6.0:** Tor proxying requires pysocks (pip install pysocks) and at least version 2.10.0 of python requests for SOCKS proxy support.
-- **0.9.0:** OSINT functionality pulled from Phage Malware Tracker (private project) - requires VirusTotal API key. More robust retrieval of wild files. Local URL and hash caching (reduces API load).
+- **0.6.0:** Tor proxying requires pysocks (pip install pysocks) and at least version 2.10.0 of python requests for SOCKS proxy support.  
+- **0.9.0:** OSINT functionality pulled from Phage Malware Tracker (private project) - requires VirusTotal API key. More robust retrieval of wild files. Local URL and hash caching (reduces API load).  
+- **0.9.1:** Updated to use V3 Viper API. No longer compatiable with V2.
 
 
 ### Installation ###
@@ -106,8 +107,9 @@ Start the Viper web interface:
 *cd /opt/viper  
 sudo -H -u spider python viper-web*  
 
+Take note of the admin password that is created when Viper is started. Use this to log into http://\<viper IP\>:\<viper port\>/admin and retrieve the API token.  
+
 - Complete the config file at: /opt/ph0neutria/config/settings.conf  
-- Complete the config file at: /home/spider/.viper/viper.conf
 
 Start ph0neutria:  
 
