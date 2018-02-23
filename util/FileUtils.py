@@ -231,6 +231,6 @@ def isAcceptedUrl(fileUrl):
 
 
 def cleanUp(filePath):
-    if baseConfig.deleteOutput.lower() == 'yes':
+    if baseConfig.deleteOutput.lower() == 'yes' and os.path.exists(filePath):
         logging.info('Removing file: {0}'.format(filePath))
         os.remove(filePath)
