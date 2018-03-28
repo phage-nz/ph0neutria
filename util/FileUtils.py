@@ -22,8 +22,8 @@ logging = getModuleLogger(__name__)
 
 # TOR proxy:
 proxies = {
-    'http': 'socks5://127.0.0.1:9050',
-    'https': 'socks5://127.0.0.1:9050'
+    'http': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort)),
+    'https': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort))
 }
 
 
