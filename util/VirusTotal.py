@@ -25,6 +25,8 @@ vtWait = int(float(60)/reqLimit)
 
 
 def getUrlsForIp(ip_addr):
+    if baseConfig.disableVT.lower() == 'yes':
+        return []
     params = {'apikey': baseConfig.vtKey, 'ip': ip_addr}
     headers = {'Accept-Encoding': 'gzip, deflate', 'User-Agent': baseConfig.vtUser}
 

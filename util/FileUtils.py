@@ -20,11 +20,17 @@ baseConfig = getBaseConfig(rootDir)
 logging = getModuleLogger(__name__)
 
 
-# TOR proxy:
-proxies = {
-    'http': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort)),
-    'https': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort))
-}
+# TOR proxy
+if baseConfig.useTor.lower() == 'yes':
+    proxies = {
+        'http': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort)),
+        'https': 'socks5://%s:%d'%(baseConfig.torIP, int(baseConfig.torPort))
+    }
+else:
+    proxies = {
+        'http': '',
+        'https': ''
+    }
 
 
 def getWildFile(listedUrl):

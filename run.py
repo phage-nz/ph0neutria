@@ -148,7 +148,10 @@ def startOSINT():
     if len(shodan_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(shodan_list)
 
-    bl_list = getBLList()
+    if baseConfig.disableVT.lower() == 'no':
+        bl_list = getBLList()
+    else:
+        bl_list = []
 
     if len(bl_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
         bl_thread = threading.Thread(target=fetchOSINT, args=[bl_list])

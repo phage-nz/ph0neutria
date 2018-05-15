@@ -7,13 +7,14 @@ import string
 
 
 class baseObj:
-    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torIP, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, viperUrlAdd, viperApiToken):
+    def __init__(self, multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, useTor, torIP, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, disableVT, viperUrlAdd, viperApiToken):
         self.multiProcess = multiProcess
         self.userAgent = userAgent
         self.outputFolderName = outputFolderName
         self.outputFolder = outputFolder
         self.deleteOutput = deleteOutput
         self.dateFormat = dateFormat
+        self.useTor = useTor
         self.torIP = torIP 
         self.torPort = torPort
         self.redirectLimit = redirectLimit
@@ -28,6 +29,7 @@ class baseObj:
         self.vtKey = vtKey
         self.vtUser = vtUser
         self.vtReqPerMin = vtReqPerMin
+        self.disableVT = disableVT
         self.viperUrlAdd = viperUrlAdd
         self.viperApiToken = 'Token {0}'.format(viperApiToken)
 
@@ -42,6 +44,7 @@ def getBaseConfig(rootDir):
     outputFolder = os.path.join(rootDir, outputFolderName)
     deleteOutput = parser.get('Core', 'deleteoutput')
     dateFormat = parser.get('Core', 'dateformat')
+    useTor = parser.get('Core', 'usetor')
     torIP = parser.get('Core', 'torip')
     torPort = parser.get('Core', 'torport')
     redirectLimit = parser.get('Core', 'redirectlimit')
@@ -56,7 +59,8 @@ def getBaseConfig(rootDir):
     vtKey = parser.get('VirusTotal', 'apikey')
     vtUser = parser.get('VirusTotal', 'username')
     vtReqPerMin = parser.get('VirusTotal', 'requestsperminute')
+    disableVT = parser.get('VirusTotal', 'disable')
     viperUrlAdd = parser.get('Viper', 'addurl')
     viperApiToken = parser.get('Viper', 'apitoken')
 
-    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, torIP, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, viperUrlAdd, viperApiToken)
+    return baseObj(multiProcess, userAgent, outputFolderName, outputFolder, deleteOutput, dateFormat, useTor, torIP, torPort, redirectLimit, hashCountLimit, urlCharLimit, osintDays, malShareApiKey, disableMalShare, disableOsint, otxKey, shodanKey, vtKey, vtUser, vtReqPerMin, disableVT, viperUrlAdd, viperApiToken)
