@@ -57,9 +57,9 @@ def getTags(fileUrl):
     tags = MutableString()
 
     tags += time.strftime(baseConfig.dateFormat)
-    tags += ' '
+    tags += ', '
     tags += urlparse(fileUrl).hostname
-    tags += ' '
+    tags += ', '
     tags += 'ph0neutria'
 
     logging.debug('tags={0}'.format(tags))
