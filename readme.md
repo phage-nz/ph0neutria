@@ -97,17 +97,12 @@ Ensure Tor is started:
 
 *service tor restart*  
 
-Start the Viper API:  
-
-*cd /opt/viper  
-sudo -H -u spider python viper-api*  
-
-Start the Viper web interface:  
+Start the Viper API and web interface:  
 
 *cd /opt/viper  
 sudo -H -u spider python viper-web*  
 
-Take note of the admin password that is created when Viper is started. Use this to log into http://\<viper IP\>:\<viper port\>/admin and retrieve the API token.  
+Take note of the admin password that is created when Viper is started. Use this to log into http://\<viper IP\>:\<viper port\>/admin (default: http://127.0.0.1:8080/admin) and retrieve the API token from the Tokens page.  
 
 - Complete the config file at: /opt/ph0neutria/config/settings.conf  
 
