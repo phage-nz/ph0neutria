@@ -1,20 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
+import datetime
+import os
+
+import shodan
 from ConfigUtils import getBaseConfig
 from LogUtils import getModuleLogger
 from MachineUtils import getSignificantItems
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 from VirusTotal import getUrlsForIp
-
-
-import datetime
-import json
-import os
-import requests
-import shodan
-import sys
-import time
-
 
 cDir = os.path.dirname(os.path.realpath(__file__))
 rootDir = os.path.abspath(os.path.join(cDir, os.pardir))
@@ -58,7 +51,7 @@ def queryShodan():
         else:
             return []
 
-    except shodan.APIError, e:
+    except shodan.APIError as e:
         logging.info('Error: {0}'.format(e))
         return []
 

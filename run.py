@@ -1,4 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+from __future__ import print_function
+
+import multiprocessing
+import os
+import threading
+
 from util.ConfigUtils import getBaseConfig
 from util.CrimeTracker import getCrimeList
 from util.DnsBlUtils import getBLList
@@ -11,15 +17,9 @@ from util.PayloadUtils import getPLList
 from util.ShodanUtils import getShodanList
 from util.VxVault import getVXList
 
-
-import multiprocessing
-import os
-import threading
-
-
-#       .__    _______                        __         .__       
-#______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____  
-#\____ \|  |  \/  /_\  \ /    \_/ __ \|  |  \   __\_  __ \  \__  \ 
+#       .__    _______                        __         .__
+#______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
+#\____ \|  |  \/  /_\  \ /    \_/ __ \|  |  \   __\_  __ \  \__  \
 #|  |_> >   Y  \  \_/   \   |  \  ___/|  |  /|  |  |  | \/  |/ __ \_
 #|   __/|___|  /\_____  /___|  /\___  >____/ |__|  |__|  |__(____  /
 #|__|        \/       \/     \/     \/                           \/
@@ -31,14 +31,14 @@ import threading
 
 rootDir = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(rootDir, 'res', 'banner.txt'), 'r') as banner:
-        print banner.read()
+        print(banner.read())
 
 
 logging = getModuleLogger(__name__)
 baseConfig = getBaseConfig(rootDir)
 
 
-def main(): 
+def main():
     if not os.path.exists(baseConfig.outputFolder):
         os.makedirs(baseConfig.outputFolder)
 
@@ -73,7 +73,7 @@ def main():
             for web in webs:
                 web.terminate()
                 web.join()
-                
+
     else:
         logging.info('Spawning single ph0neutria spider. Press CTRL+C to terminate.')
         startMalc0de()
@@ -114,10 +114,10 @@ def startOSINT():
 
     if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(pl_list)
-        
+
     if len(pl_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(pl_list)
-        
+
     crime_list = getCrimeList()
 
     if len(crime_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
@@ -137,7 +137,7 @@ def startOSINT():
 
     if len(otx_list) > 0 and baseConfig.multiProcess.lower() == 'no':
         fetchOSINT(otx_list)
-        
+
     shodan_list = getShodanList()
 
     if len(shodan_list) > 0 and baseConfig.multiProcess.lower() == 'yes':
