@@ -46,26 +46,31 @@ OSINT. If required, passive DNS is used to produce a list of recent IP's for a d
 ### Installation ###
 The following script will install ph0neutria along with Viper and Tor:  
 
-*wget https://raw.githubusercontent.com/phage-nz/ph0neutria/master/install.sh  
-chmod +x install.sh  
-sudo ./install.sh*  
+```
+sudo sh -c "$(curl -sSL https://raw.githubusercontent.com/phage-nz/ph0neutria/master/install.sh)"
+```
 
 Simple as that!
 
 #### Optional: ####
 Configure additional ClamAV signatures:  
 
-*cd /tmp  
+```
+cd /tmp  
 git clone https://github.com/extremeshok/clamav-unofficial-sigs  
 cd clamav-unofficial-sigs  
 cp clamav-unofficial-sigs.sh /usr/local/bin  
 chmod 755 /usr/local/bin/clamav-unofficial-sigs.sh  
 mkdir /etc/clamav-unofficial-sigs  
 cp config/* /etc/clamav-unofficial-sigs  
-cd /etc/clamav-unofficial-sigs*  
+cd /etc/clamav-unofficial-sigs
+```
 
-Rename os.\<yourdistro\>.conf to os.conf, for example:  
-*mv os.ubuntu.conf os.conf*  
+Rename os.<yourdistro>.conf to os.conf, for example:  
+
+```
+mv os.ubuntu.conf os.conf  
+```
 
 Modify configuration files:  
 - **master.conf:** search for "Enabled Databases" and enable/disable desired sources.  
@@ -73,7 +78,8 @@ Modify configuration files:
 
 For more configuration info see: https://github.com/extremeshok/clamav-unofficial-sigs  
 
-*mkdir /var/log/clamav-unofficial-sigs  
+```
+mkdir /var/log/clamav-unofficial-sigs  
 clamav-unofficial-sigs.sh --install-cron  
 clamav-unofficial-sigs.sh --install-logrotate  
 clamav-unofficial-sigs.sh --install-man  
@@ -82,6 +88,7 @@ cd /tmp/clamav-unofficial-sigs
 cp systemd/\* /etc/systemd  
 cd ..  
 rm -rf clamav-unofficial-sigs*  
+```
 
 It'll take a while to pull down the new signatures - during which time ClamAV may not be available.
 
@@ -95,31 +102,36 @@ Take precautions when piecing together your malware zoo:
 
 Ensure Tor is started:  
 
-*service tor restart*  
+`service tor restart`
 
 Start the Viper API and web interface:  
 
-*cd /opt/viper  
-sudo -H -u spider python viper-web*  
+```
+cd /opt/viper  
+sudo -H -u spider python viper-web
+```
 
-Take note of the admin password that is created when Viper is started. Use this to log into http://\<viper IP\>:\<viper port\>/admin (default: http://127.0.0.1:8080/admin) and retrieve the API token from the Tokens page.  
+Take note of the admin password that is created when Viper is started. Use this to log into `http://<viper IP\>:<viper port>/admin` (default: `http://127.0.0.1:8080/admin`) and retrieve the API token from the Tokens page.  
 
-The main Viper web interface will be available at http://\<viper IP\>:\<viper port\> (default: http://127.0.0.1:8080).  
+The main Viper web interface will be available at `http://<viper IP>:<viper port>` (default: `http://127.0.0.1:8080`).  
 
-- Complete the config file at: /opt/ph0neutria/config/settings.conf  
+- Complete the config file at: `/opt/ph0neutria/config/settings.conf`  
 
 Start ph0neutria:  
 
-*cd /opt/ph0neutria  
-sudo -H -u spider python run.py*
+```
+cd /opt/ph0neutria  
+sudo -H -u spider python run.py
+```
 
 You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates.
 
 To run this daily, create a script in /etc/cron.daily with the following:  
 
-*#!/bin/bash  
+```
+#!/bin/bash  
 cd /opt/ph0neutria && sudo -H -u spider python run.py*
-
+```
 
 ### Tags and Notes ###
 Tags:  
