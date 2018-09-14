@@ -1,0 +1,30 @@
+[Core]
+useragent=Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.89 Safari/537.36
+outputfolder=/opt/ph0neutria/tmp
+geolitedb=/opt/ph0neutria/data/GeoLite2-City.mmdb
+asndb=/opt/ph0neutria/data/GeoLite2-ASN.mmdb
+# Refer to: https://docs.python.org/3/library/time.html - escape '%' with '%'
+dateformat=%%d-%%m-%%Y
+redirectlimit=6
+usetor=yes
+torip=127.0.0.1
+torport=9050
+hashcountlimit=1
+urlcharlimit=256
+
+[VirusTotal]
+apikey=YOUR API KEY
+username=YOUR USERNAME
+requestsperminute=5
+scoreminimum=4
+preferredengines=Malwarebytes,BitDefender,ESET-NOD32,Kaspersky,Sophos AV,GData,Emsisoft,Avira
+
+[Malware]
+workers=4
+malwaredays=1
+blacklistedtags=pua,pup,wanna,wannacry,wanacrypt0r,wcry
+
+[Viper]
+# http://viper-framework.readthedocs.io/en/latest/usage/web.html
+addurl=http://127.0.0.1:8080/api/v3/project/default/malware/upload/
+apitoken=YOUR API TOKEN

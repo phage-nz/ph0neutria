@@ -6,6 +6,6 @@ ______ |  |__ \   _  \   ____   ____  __ ___/  |________|__|____
 |__|        \/       \/     \/     \/                           \/
 
                   ph0neutria malware crawler
-                            v0.9.0
+                            v1.0.0
              https://github.com/phage-nz/ph0neutria
 
