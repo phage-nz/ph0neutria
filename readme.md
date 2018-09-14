@@ -33,8 +33,9 @@ VirusTotal is a core component of ph0neutria that cannot be disabled. IP lists a
 
 
 ### Screenshots ###
-![CLI](res/img/cli_1.png "Initial Spawning of Spiders")  
-![CLI](res/img/cli_2.png "General Operation")  
+![CLI](res/img/cli_1.png "Collection of URLs")  
+![CLI](res/img/cli_2.png "Data Enrichment")  
+![CLI](res/img/cli_3.png "File Retrieval")  
 ![Web](res/img/viper_1.png "Main Sample Listing")  
 ![Web](res/img/viper_2.png "Sample Overview")  
 ![Web](res/img/viper_3.png "Sample Notes")  
