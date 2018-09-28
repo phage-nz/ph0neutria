@@ -43,7 +43,7 @@ def get_malwareurl_list():
         LOGGING.info('Fetching latest MalShare list...')
 
         request = requests.get(
-            'http://malshare.com/api.php',
+            'https://malshare.com/api.php',
             params=payload,
             headers=user_agent)
 
