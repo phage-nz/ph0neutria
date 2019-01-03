@@ -10,6 +10,7 @@ OTXv2
 pillow
 Py3DNS
 pyOpenSSL
+pysocks
 python-Levenshtein
 python-magic
 requests

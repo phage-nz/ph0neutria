@@ -24,8 +24,8 @@ LOGGING = get_module_logger(__name__)
 # TOR proxy
 if BASECONFIG.use_tor:
     proxies = {
-        'http': 'socks5://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port)),
-        'https': 'socks5://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port))
+        'http': 'socks5h://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port)),
+        'https': 'socks5h://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port))
     }
 
 else:
@@ -95,7 +95,7 @@ def head_request(file_url):
     try:
         user_agent = {'User-agent': BASECONFIG.user_agent}
 
-        head = requests.head(file_url, headers=user_agent, timeout=(20, 20))
+        head = requests.head(file_url, headers=user_agent, proxies=proxies, timeout=(20, 20))
 
         if head.status_code == 200:
             if 'Content-Length' in head.headers:
@@ -173,7 +173,7 @@ def request_url(file_url):
     try:
         user_agent = {'User-agent': BASECONFIG.user_agent}
 
-        request = requests.get(file_url, headers=user_agent, timeout=(20, 20))
+        request = requests.get(file_url, headers=user_agent, proxies=proxies, timeout=(20, 20))
 
         if request.status_code == 200:
             response = request.content
