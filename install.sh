@@ -40,6 +40,7 @@ cd /opt
 git clone https://github.com/phage-nz/ph0neutria
 cd ph0neutria
 pip3 install -r requirements.txt
+cp core/config/settings.conf.dist core/config/settings.conf
 useradd -r -s /bin/false spider
 mkdir /home/spider
 chown spider:spider /home/spider
