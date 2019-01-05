@@ -129,7 +129,7 @@ Start ph0neutria:
 
 ```
 cd /opt/ph0neutria  
-sudo -H -u spider pytho3n run.py
+sudo -H -u spider python3 run.py
 ```
 
 You can press Ctrl+C at any time to kill the run. You are free to run it again as soon as you'd like - you can't end up with database duplicates.
