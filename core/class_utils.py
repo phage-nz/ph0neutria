@@ -3,13 +3,12 @@ from datetime import datetime
 
 
 class MalwareHost(object):
-    def __init__(self, address, sha256, family, source):
+    def __init__(self, address, sha256, source):
         """Initialise a new malware host.
 
         Params:
         - address: (type: string) IP address.
         - sha256: (type: string) SHA256 hash of payload.
-        - family: (type: string) malware family.
         - source: (type: string) reporting source.
 
         Returns:
@@ -17,7 +16,6 @@ class MalwareHost(object):
         """
         self.address = address
         self.sha256 = sha256
-        self.family = family
         self.source = source
 
 

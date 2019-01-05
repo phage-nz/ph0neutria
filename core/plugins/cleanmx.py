@@ -90,7 +90,7 @@ def get_malwareurl_list():
                         host_name,
                         ip_addr,
                         url,
-                        'Clean MX'))
+                        NAME))
 
             else:
                 break

@@ -181,7 +181,7 @@ def get_hybrid_report(job_id):
                             host, av_class))
 
                     malware_host = MalwareHost(
-                        host, sha256, av_class, 'Hybrid Analysis')
+                        host, sha256, NAME)
                     malware_hosts.append(malware_host)
 
                 if len(malware_hosts) > 0:

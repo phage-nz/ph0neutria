@@ -21,7 +21,8 @@ BASECONFIG = get_base_config(ROOTDIR)
 
 LOGGING = get_module_logger(__name__)
 
-VT_WAIT = int(float(60) / BASECONFIG.vt_req_min)
+URL_WAIT = int(float(60) / BASECONFIG.vt_req_min)
+CLASS_WAIT = URL_WAIT / BASECONFIG.malware_workers
 
 
 def get_urls_for_ip(ip_addr, source):
@@ -47,7 +48,7 @@ def get_urls_for_ip(ip_addr, source):
         headers=headers)
 
     LOGGING.info('Waiting for a moment...')
-    time.sleep(VT_WAIT)
+    time.sleep(URL_WAIT)
 
     if response.status_code == 200:
         vt_report = json.loads(response.text)
@@ -129,7 +130,9 @@ def get_class_from_scans(scans):
     for engine in BASECONFIG.vt_preferred_engines:
         if engine in scans:
             if scans[engine]['detected']:
-                return scans[engine]['result']
+                class_result = scans[engine]['result']
+                LOGGING.info('Sample classified as: {0}'.format(class_result))
+                return class_result
 
     LOGGING.warning('Unable to determine sample classification. Returning generic response.')
 
@@ -158,7 +161,7 @@ def get_class_for_hash(file_hash):
         headers=headers)
 
     LOGGING.info('Waiting for a moment...')
-    time.sleep(VT_WAIT)
+    time.sleep(CLASS_WAIT)
 
     if response.status_code == 200:
         vt_report = json.loads(response.text)

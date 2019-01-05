@@ -88,7 +88,7 @@ def get_otx_data():
                                     host_name,
                                     ip_addr,
                                     url,
-                                    'OTX'))
+                                    NAME))
 
                     host_indicators = ['domain', 'hostname', 'IPv4']
 
@@ -130,7 +130,7 @@ def get_malwareurl_list():
                 if ip_addr:
                     if ip_addr not in host_list:
                         host_list.append(ip_addr)
-                        domain_urls = get_urls_for_ip(ip_addr, 'OTX')
+                        domain_urls = get_urls_for_ip(ip_addr, NAME)
 
                         if len(domain_urls) > 0:
                             url_list.extend(domain_urls)
@@ -140,7 +140,7 @@ def get_malwareurl_list():
 
         if len(ip_list) > 0:
             for ip_addr in ip_list:
-                ip_results = get_urls_for_ip(ip_addr, 'OTX')
+                ip_results = get_urls_for_ip(ip_addr, NAME)
 
                 if len(ip_results) > 0:
                     url_list.extend(ip_results)

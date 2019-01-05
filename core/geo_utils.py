@@ -57,6 +57,9 @@ def geo_lookup(ip_addr):
     """
     if validators.ipv4(ip_addr):
         try:
+            if ip_addr == '255.255.255.255':
+                return 'ZZ'
+
             with geoip2.database.Reader(BASECONFIG.geolite_db) as reader:
                 response = reader.city(ip_addr)
 
@@ -114,6 +117,9 @@ def asn_lookup(ip_addr):
     """
     if validators.ipv4(ip_addr):
         try:
+            if ip_addr == '255.255.255.255':
+                return 'AS0000 Unknown'
+
             with geoip2.database.Reader(BASECONFIG.asn_db) as reader:
                 response = reader.asn(ip_addr)
 
