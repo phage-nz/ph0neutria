@@ -19,7 +19,7 @@ LOGGING = get_module_logger(__name__)
 
 
 BAD_CHARS = ['*', '?']
-ALLOWED_EXTENSIONS = ['.doc', '.xls', '.docx', '.xlsx', '.bin', '.dll', '.exe', '.gz', '.rar', '.zip']
+ALLOWED_EXTENSIONS = ['.doc', '.xls', '.docx', '.xlsx', '.pdf', '.js', '.vba', '.vbs', '.hta', '.lnk', '.wsf', '.bin', '.dll', '.exe', '.7z', '.gz', '.rar', '.zip', '.infected', '.virus']
 
 
 def build_folder_map(base_url, proxies):
