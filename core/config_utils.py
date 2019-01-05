@@ -26,6 +26,7 @@ class baseObj:
             vt_score_min,
             vt_preferred_engines,
             malware_days,
+            tag_samples,
             blacklisted_tags,
             malware_workers,
             viper_add_url,
@@ -51,6 +52,7 @@ class baseObj:
         - vt_preferred_engines: (type: string) comma separated list of preferred VirusTotal engines.
         - malware_days: (type: string) general number of days back to consider malware valid for.
         - malware_workers: (type: int) number of wild file processors to spawn.
+        - tag_samples: (type: bool) Tag samples using VirusTotal?
         - blacklisted_tags: (type: string) comma separated list of blacklisted malware family strings.
         - viper_add_url: (type: string) URL of Viper entry addition API.
         - viper_token: (type: string) Django REST API token.
@@ -75,6 +77,7 @@ class baseObj:
         self.vt_score_min = int(vt_score_min)
         self.vt_preferred_engines = vt_preferred_engines.split(',')
         self.malware_days = int(malware_days)
+        self.tag_samples = tag_samples == 'yes'
 
         if len(blacklisted_tags) > 0:
             self.blacklisted_tags = blacklisted_tags.split(',')
@@ -100,7 +103,7 @@ def get_base_config(ROOTDIR):
     - asn_db: (type: string) GeoLite ASN DB file path.
     - date_format: (type: string) format of date stamps sent to Viper.
     - redirect_limit: (type: int) number of HTTP redirects to handle before aborting.
-    - use_tor: (type: bool) Use Tor for all malware downloads?
+    - use_tor: (type: string) Use Tor for all malware downloads?
     - tor_ip: (type: string) IP that Tor is listening on.
     - tor_port: (type: string) Port that Tor is listening on.
     - hash_count_limit: (type: int) Number of copies of a unique file to permit.
@@ -111,6 +114,7 @@ def get_base_config(ROOTDIR):
     - vt_score_min: (type: int) minimum VirusTotal score to accept.
     - vt_preferred_engines: (type: string list) comma separated list of preferred VirusTotal engines.
     - malware_days: (type: int) general number of days back to consider malware valid for.
+    - tag_samples: (type: string) Tag samples using VirusTotal?
     - blacklisted_tags: (type: string list) comma separated list of blacklisted malware family strings.
     - malware_workers: (type: int) number of wild file processors to spawn.
     - viper_add_url: (type: string) URL of Viper entry addition API.
@@ -140,6 +144,7 @@ def get_base_config(ROOTDIR):
     vt_score_min = parser.get('VirusTotal', 'scoreminimum')
     vt_preferred_engines = parser.get('VirusTotal', 'preferredengines')
     malware_days = parser.get('Malware', 'malwaredays')
+    tag_samples = parser.get('Malware', 'tagsamples')
     blacklisted_tags = parser.get('Malware', 'blacklistedtags')
     malware_workers = parser.get('Malware', 'workers')
     viper_add_url = parser.get('Viper', 'addurl')
@@ -163,6 +168,7 @@ def get_base_config(ROOTDIR):
         vt_score_min,
         vt_preferred_engines,
         malware_days,
+        tag_samples,
         blacklisted_tags,
         malware_workers,
         viper_add_url,

@@ -22,6 +22,7 @@ preferredengines=Malwarebytes,BitDefender,ESET-NOD32,Kaspersky,Sophos AV,GData,E
 [Malware]
 workers=4
 malwaredays=1
+tagsamples=yes
 blacklistedtags=pua,pup,wanna,wannacry,wanacrypt0r,wcry
 
 [Viper]

@@ -37,7 +37,9 @@ def build_folder_map(base_url, proxies):
     try:
         LOGGING.info('Requesting: {0}'.format(base_url))
 
-        request = requests.get(base_url, proxies=proxies, timeout=(20, 20))
+        user_agent = {'User-agent': BASECONFIG.user_agent}
+
+        request = requests.get(base_url, headers=user_agent, proxies=proxies, timeout=(20, 20))
 
         if request.status_code == 200:
             LOGGING.info('Request OK. Parsing result...')
