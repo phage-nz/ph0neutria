@@ -7,6 +7,7 @@ geoip2
 jsonpickle
 lxml
 netaddr
+numpy
 OTXv2
 pillow
 Py3DNS
