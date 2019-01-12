@@ -3,6 +3,7 @@
 from .config_utils import get_base_config
 from .crypto_utils import hash_file, random_string
 from .log_utils import get_module_logger
+from .string_utils import get_host_from_url
 from urllib.parse import urljoin, urlparse
 
 
@@ -23,13 +24,13 @@ LOGGING = get_module_logger(__name__)
 
 # TOR proxy
 if BASECONFIG.use_tor:
-    proxies = {
+    PROXIES = {
         'http': 'socks5h://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port)),
         'https': 'socks5h://{0}:{1}'.format(BASECONFIG.tor_ip, int(BASECONFIG.tor_port))
     }
 
 else:
-    proxies = {
+    PROXIES = {
         'http': '',
         'https': ''
     }
@@ -49,6 +50,11 @@ def profile_url_file(listed_url):
         return False
 
     add_to_url_cache(listed_url)
+
+    if get_host_from_url(listed_url).endswith('.onion'):
+        if not BASECONFIG.use_tor:
+            LOGGING.warning('.onion source requires Tor to be enabled.')
+            return False
 
     file_url, prestage_ok, abort_get = head_request(listed_url)
 
@@ -95,14 +101,14 @@ def head_request(file_url):
     try:
         user_agent = {'User-agent': BASECONFIG.user_agent}
 
-        head = requests.head(file_url, headers=user_agent, proxies=proxies, timeout=(20, 20))
+        head = requests.head(file_url, headers=user_agent, proxies=PROXIES, timeout=(20, 20))
 
         if head.status_code == 200:
             if 'Content-Length' in head.headers:
                 file_size = int(head.headers['Content-Length']) >> 20
 
                 if (file_size > 25):
-                    LOGGING.error(
+                    LOGGING.warning(
                         'File is {0}MB. Too large to bother processing.'.format(file_size))
                     return file_url, False, True
 
@@ -173,7 +179,7 @@ def request_url(file_url):
     try:
         user_agent = {'User-agent': BASECONFIG.user_agent}
 
-        request = requests.get(file_url, headers=user_agent, proxies=proxies, timeout=(20, 20))
+        request = requests.get(file_url, headers=user_agent, proxies=PROXIES, timeout=(20, 20))
 
         if request.status_code == 200:
             response = request.content

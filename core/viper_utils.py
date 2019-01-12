@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from .config_utils import get_base_config
-from .crypto_utils import hash_file, random_string
 from .geo_utils import resolve_asn, resolve_country
 from .log_utils import get_module_logger
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -21,11 +20,11 @@ BASECONFIG = get_base_config(ROOTDIR)
 LOGGING = get_module_logger(__name__)
 
 
-def upload_to_viper(mal_url, file_path):
+def upload_to_viper(mal_url, file_path, mal_class='undefined'):
     try:
         file_name = urlparse(mal_url.url).path.strip('/')
 
-        sample_data = {'tag_list': make_tags(mal_url), 'note_title': 'Sample Source', 'note_body': make_note(mal_url), 'file_name': file_name}
+        sample_data = {'tag_list': make_tags(mal_url, mal_class), 'note_title': 'Sample Source', 'note_body': make_note(mal_url), 'file_name': file_name}
 
         auth_header = {'Authorization': BASECONFIG.viper_token}
 
@@ -60,7 +59,7 @@ def upload_to_viper(mal_url, file_path):
     return False
 
 
-def make_tags(mal_url):
+def make_tags(mal_url, mal_class):
     tags = ''
 
     tags += time.strftime(BASECONFIG.date_format)
@@ -70,6 +69,12 @@ def make_tags(mal_url):
     tags += resolve_asn(mal_url.address)
     tags += ', '
     tags += resolve_country(mal_url.address)
+    tags += ', '
+    tags += resolve_asn(mal_url.address)
+
+    if BASECONFIG.tag_samples:
+        tags += ', '
+        tags += mal_class
 
     LOGGING.debug('tags={0}'.format(tags))
 

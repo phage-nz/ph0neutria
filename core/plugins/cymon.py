@@ -215,7 +215,7 @@ def get_cymon_feed(jwt, feed_id, pages):
             url_list = []
 
             for ip_addr in ip_list:
-                ip_results = get_urls_for_ip(ip_addr, 'Cymon')
+                ip_results = get_urls_for_ip(ip_addr, NAME)
 
                 if len(ip_results) > 0:
                     url_list.extend(ip_results)

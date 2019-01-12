@@ -1,6 +1,6 @@
 # ph0neutria #
 **ph0neutria malware crawler  
-v1.0.0  
+v1.0.1  
 https://github.com/phage-nz/ph0neutria**
 
 ### About ###
@@ -17,6 +17,7 @@ What does the name mean? "Phoneutria nigriventer" is commonly known as the Brazi
 
 ### Sources ###
 As of version 1.0.0 all sources are created as 'plugins', found in the plugin sub-directory of the core scripts folder. Default sources are:  
+- 0xffff0800's Malware Library (credit: http://0day.coffee).  
 - CleanMX (requires approved user-agent).  
 - Cymon, which includes: Abuse.ch trackers, Bambenek C2 feed, Cyber Crime Tracker, Malc0de, URLVir and VX Vault.  
 - Hybrid Analysis (requires vetted API key).  
@@ -46,6 +47,7 @@ VirusTotal is a core component of ph0neutria that cannot be disabled. IP lists a
 - **0.9.0:** OSINT functionality pulled from Phage Malware Tracker (private project) - requires VirusTotal API key. More robust retrieval of wild files. Local URL and hash caching (reduces API load).  
 - **0.9.1:** Updated to use V3 Viper API. No longer compatiable with V2.  
 - **1.0.0:** Major update. Pull from Safari Guide malware pipeline. Plugin architecture. Python 3.0.  
+- **1.0.1:** Source update (added 0xffff0800's library). Samples can now be tagged with VirusTotal sourced classification.  
 
 
 ### Installation ###

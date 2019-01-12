@@ -68,7 +68,7 @@ def get_malwareurl_list():
                 LOGGING.info('Fetched page {0} of {1}...'.format(n, pages))
 
                 for result in results['matches']:
-                    ip_list = get_urls_for_ip(result['ip_str'], 'Shodan')
+                    ip_list = get_urls_for_ip(result['ip_str'], NAME)
 
                     if len(ip_list) > 0:
                         url_list.extend(ip_list)

@@ -4,7 +4,6 @@ cryptography
 feedparser
 fuzzywuzzy
 geoip2
-jsonpickle
 lxml
 netaddr
 numpy

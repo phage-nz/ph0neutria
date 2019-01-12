@@ -69,7 +69,7 @@ def get_malwareurl_list():
                             host_name,
                             ip_addr,
                             url,
-                            'Malshare'))
+                            NAME))
 
             return url_list
 
