@@ -14,22 +14,20 @@ echo 'deb-src http://deb.torproject.org/torproject.org xenial main' >> /etc/apt/
 gpg --keyserver keys.gnupg.net --recv A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | sudo apt-key add -
 apt update && apt upgrade
-apt-get -f install autoconf bison build-essential clamav clamav-daemon clamav-freshclam flex gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libpcre3 libpcre3-dev libtool python3-dev python3-pip ssdeep swig tor deb.torproject.org-keyring -y
+apt-get -f install autoconf automake bison build-essential clamav clamav-daemon clamav-freshclam flex gcc git libssl-dev libfuzzy-dev libffi-dev libimage-exiftool-perl libjansson-dev libmagic-dev libpcre3 libpcre3-dev libtool make p7zip-full python3-dev python3-pip ssdeep swig tor deb.torproject.org-keyring unrar -y
 pip3 install --upgrade setuptools
 cd /tmp
-git clone https://github.com/plusvic/yara
+git clone https://github.com/VirusTotal/yara
 cd yara
 ./bootstrap.sh
-autoreconf -vi --force
-./configure --enable-cuckoo --enable-magic
+./configure
 make
 make install
-cd yara-python/
-python3 setup.py install
 cd /tmp
 rm -rf yara
-cd /opt
+pip3 install yara-python
 git clone https://github.com/viper-framework/viper
+cd /opt
 cd viper
 pip3 install -r requirements.txt
 # Workaround for requests SSL errors (https://github.com/requests/requests/issues/3006):
