@@ -20,7 +20,7 @@ BASECONFIG = get_base_config(ROOTDIR)
 LOGGING = get_module_logger(__name__)
 
 
-def upload_to_viper(mal_url, file_path, mal_class='undefined'):
+def upload_to_viper(mal_url, file_path, mal_class='Malware.Generic'):
     try:
         file_name = urlparse(mal_url.url).path.strip('/')
 
