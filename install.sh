@@ -26,8 +26,8 @@ make install
 cd /tmp
 rm -rf yara
 pip3 install yara-python
-git clone https://github.com/viper-framework/viper
 cd /opt
+git clone https://github.com/viper-framework/viper
 cd viper
 pip3 install -r requirements.txt
 # Workaround for requests SSL errors (https://github.com/requests/requests/issues/3006):
