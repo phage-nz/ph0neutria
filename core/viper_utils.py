@@ -63,18 +63,20 @@ def make_tags(mal_url, mal_class):
     tags = ''
 
     tags += time.strftime(BASECONFIG.date_format)
-    tags += ', '
+    tags += ','
     tags += urlparse(mal_url.url).hostname
-    tags += ', '
-    tags += resolve_asn(mal_url.address)
-    tags += ', '
-    tags += resolve_country(mal_url.address)
-    tags += ', '
-    tags += resolve_asn(mal_url.address)
+    tags += ','
+    tags += resolve_asn(mal_url.address).replace(" ", "_")
+    tags += ','
+    tags += resolve_country(mal_url.address).replace(" ", "_")
+    tags += ','
+    tags += resolve_asn(mal_url.address).replace(" ", "_")
 
     if BASECONFIG.tag_samples:
-        tags += ', '
-        tags += mal_class
+        tags += ','
+        tags += mal_class.replace(" ", "_")
+
+    tags = tags.lower()
 
     LOGGING.debug('tags={0}'.format(tags))
 
