@@ -12,6 +12,7 @@ import os
 import requests
 import sys
 import time
+import re
 
 
 CDIR = os.path.dirname(os.path.realpath(__file__))
@@ -62,25 +63,28 @@ def upload_to_viper(mal_url, file_path, mal_class='Malware.Generic'):
 def make_tags(mal_url, mal_class):
     tags = ''
 
-    tags += time.strftime(BASECONFIG.date_format)
+    tags += normaltag(time.strftime(BASECONFIG.date_format))
     tags += ','
-    tags += urlparse(mal_url.url).hostname
+    tags += normaltag(urlparse(mal_url.url).hostname)
     tags += ','
-    tags += resolve_asn(mal_url.address).replace(" ", "_")
+    tags += normaltag(resolve_asn(mal_url.address))
     tags += ','
-    tags += resolve_country(mal_url.address).replace(" ", "_")
-    tags += ','
-    tags += resolve_asn(mal_url.address).replace(" ", "_")
-
+    tags += normaltag(resolve_country(mal_url.address))
+  
     if BASECONFIG.tag_samples:
         tags += ','
-        tags += mal_class.replace(" ", "_")
-
-    tags = tags.lower()
+        tags += normaltag(mal_class)
 
     LOGGING.debug('tags={0}'.format(tags))
 
     return tags
+
+
+def normaltag( str ):
+    str = re.sub('[^a-z0-9A-Z\ \-\_\.]+','', str)
+    str = re.sub('[\ ]+','_', str)
+    str = str.lower()
+    return str;
 
 
 def make_note(mal_url):
