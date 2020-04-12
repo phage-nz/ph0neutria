@@ -41,7 +41,7 @@ def get_malwareurl_list():
         LOGGING.info('Fetching latest URLhaus list...')
 
         request = requests.get(
-            'https://urlhaus.abuse.ch/downloads/csv/',
+            'https://urlhaus.abuse.ch/downloads/csv_online/',
             headers=user_agent)
 
         if request.status_code == 200:
