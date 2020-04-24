@@ -3,6 +3,8 @@
 v1.0.1  
 https://github.com/phage-nz/ph0neutria**
 
+**Note:** This project is not actively maintained.
+
 ### About ###
 ph0neutria is a malware zoo builder that sources samples straight from the wild. Everything is stored in Viper for ease of access and manageability.  
 
