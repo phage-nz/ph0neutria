@@ -11,6 +11,8 @@ torip=127.0.0.1
 torport=9050
 hashcountlimit=1
 urlcharlimit=256
+#backend can either be viper(https://github.com/viper-framework/viper) or snake(https://github.com/countercept/snake)
+backend=viper
 
 [VirusTotal]
 apikey=YOUR API KEY
@@ -29,3 +31,7 @@ blacklistedtags=pua,pup,wanna,wannacry,wanacrypt0r,wcry
 # http://viper-framework.readthedocs.io/en/latest/usage/web.html
 addurl=http://127.0.0.1:8080/api/v3/project/default/malware/upload/
 apitoken=YOUR API TOKEN
+
+[Snake]
+# https://github.com/countercept/snake-core/wiki/API
+addurl=http://127.0.0.1:8000/upload/file/

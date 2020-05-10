@@ -20,6 +20,7 @@ class baseObj:
             tor_port,
             hash_count_limit,
             url_char_limit,
+            backend,
             vt_key,
             vt_user,
             vt_req_min,
@@ -30,7 +31,8 @@ class baseObj:
             blacklisted_tags,
             malware_workers,
             viper_add_url,
-            viper_token):
+            viper_token,
+            snake_add_url):
         """Initialise new configuration object.
 
         Params:
@@ -45,6 +47,7 @@ class baseObj:
         - tor_port: (type: string) Port that Tor is listening on.
         - hash_count_limit: (type: int) Number of copies of a unique file to permit.
         - url_char_limit: (type: int) Character limit for acceptable URLs.
+        - backend: (type: string) Backend system either Viper or Snake
         - vt_key: (type: string) VirusTotal API key.
         - vt_user: (type: string) VirusTotal username.
         - vt_req_min: (type: string) VirusTotal requests per minute limit.
@@ -56,6 +59,7 @@ class baseObj:
         - blacklisted_tags: (type: string) comma separated list of blacklisted malware family strings.
         - viper_add_url: (type: string) URL of Viper entry addition API.
         - viper_token: (type: string) Django REST API token.
+        - snake_add_url: (type: string) URL of snake entry addition API.
 
         Returns:
         - result: (type: baseObj) configuration object.
@@ -71,6 +75,7 @@ class baseObj:
         self.tor_port = tor_port
         self.hash_count_limit = int(hash_count_limit)
         self.url_char_limit = int(url_char_limit)
+        self.backend = backend
         self.vt_key = vt_key
         self.vt_user = vt_user
         self.vt_req_min = int(vt_req_min)
@@ -89,6 +94,7 @@ class baseObj:
         self.viper_add_url = viper_add_url
         self.viper_token = 'Token {0}'.format(viper_token)
 
+        self.snake_add_url = snake_add_url
 
 def get_base_config(ROOTDIR):
     """Parse config file into a configuration object.
@@ -108,6 +114,7 @@ def get_base_config(ROOTDIR):
     - tor_port: (type: string) Port that Tor is listening on.
     - hash_count_limit: (type: int) Number of copies of a unique file to permit.
     - url_char_limit: (type: int) Character limit for acceptable URLs.
+    - backend: (type: string) Backend system either Viper or Snake
     - vt_key: (type: string) VirusTotal API key.
     - vt_user: (type: string) VirusTotal username.
     - vt_req_min: (type: int) VirusTotal requests per minute limit.
@@ -119,6 +126,7 @@ def get_base_config(ROOTDIR):
     - malware_workers: (type: int) number of wild file processors to spawn.
     - viper_add_url: (type: string) URL of Viper entry addition API.
     - viper_token: (type: string) Django REST API token.
+    - snake_add_url: (type: string) URL of Viper entry addition API.
     """
     parser = SafeConfigParser()
     parser.read(
@@ -138,6 +146,7 @@ def get_base_config(ROOTDIR):
     tor_port = parser.get('Core', 'torport')
     hash_count_limit = parser.get('Core', 'hashcountlimit')
     url_char_limit = parser.get('Core', 'urlcharlimit')
+    backend = parser.get('Core', 'backend')
     vt_key = parser.get('VirusTotal', 'apikey')
     vt_user = parser.get('VirusTotal', 'username')
     vt_req_min = parser.get('VirusTotal', 'requestsperminute')
@@ -149,6 +158,7 @@ def get_base_config(ROOTDIR):
     malware_workers = parser.get('Malware', 'workers')
     viper_add_url = parser.get('Viper', 'addurl')
     viper_token = parser.get('Viper', 'apitoken')
+    snake_add_url = parser.get('Snake', 'addurl')
 
     return baseObj(
         user_agent,
@@ -162,6 +172,7 @@ def get_base_config(ROOTDIR):
         tor_port,
         hash_count_limit,
         url_char_limit,
+        backend,
         vt_key,
         vt_user,
         vt_req_min,
@@ -172,4 +183,5 @@ def get_base_config(ROOTDIR):
         blacklisted_tags,
         malware_workers,
         viper_add_url,
-        viper_token)
+        viper_token,
+        snake_add_url)
